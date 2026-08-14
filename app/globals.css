@@ -1,0 +1,99 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Outfit:wght@300;400;500;600&display=swap');
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+    --font-heading: "Outfit", sans-serif;
+    --font-serif: "Cormorant Garamond", serif;
+    --font-sans: "Inter", sans-serif;
+    
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-destructive: var(--destructive);
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+    --color-cream: #F7F4ED;
+    --color-cream-lighter: #FAF9F5;
+    --color-charcoal: #1A1A1A;
+    
+    --radius-sm: calc(var(--radius) * 0.6);
+    --radius-md: calc(var(--radius) * 0.8);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) * 1.4);
+    --radius-2xl: calc(var(--radius) * 1.8);
+    --radius-3xl: calc(var(--radius) * 2.2);
+    --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+    --background: #F7F4ED; /* Cream/Off-White */
+    --foreground: #1A1A1A; /* Dark Charcoal */
+    --card: #FFFFFF;
+    --card-foreground: #1A1A1A;
+    --popover: #FFFFFF;
+    --popover-foreground: #1A1A1A;
+    --primary: #3D4337; /* Deep Forest Green */
+    --primary-foreground: #F7F4ED;
+    --secondary: #A1A68C; /* Sage Green */
+    --secondary-foreground: #3D4337;
+    --muted: #F1F1F1;
+    --muted-foreground: #666666; /* Muted Gray */
+    --accent: #A1A68C;
+    --accent-foreground: #3D4337;
+    --destructive: #ef4444;
+    --border: #E5E5E5; /* Soft Border Gray */
+    --input: #E5E5E5;
+    --ring: #3D4337;
+    --radius: 0.75rem;
+}
+
+.dark {
+    --background: #1A1A1A;
+    --foreground: #F7F4ED;
+    --card: #262626;
+    --card-foreground: #F7F4ED;
+    --popover: #262626;
+    --popover-foreground: #F7F4ED;
+    --primary: #A1A68C;
+    --primary-foreground: #1A1A1A;
+    --secondary: #3D4337;
+    --secondary-foreground: #F7F4ED;
+    --muted: #262626;
+    --muted-foreground: #A1A68C;
+    --accent: #3D4337;
+    --accent-foreground: #F7F4ED;
+    --border: #3D4337;
+    --input: #3D4337;
+    --ring: #A1A68C;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading font-medium tracking-tight;
+    }
+  html {
+    @apply font-sans;
+    }
+}

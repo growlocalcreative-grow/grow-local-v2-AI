@@ -1,0 +1,38 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper to check if user is the site owner
+    function isOwner() {
+      return request.auth != null && request.auth.token.email == 'growlocalcreative@gmail.com';
+    }
+
+    match /site_settings/{docId} {
+      allow read: if true;
+      allow write: if isOwner();
+    }
+
+    match /content/{docId} {
+      allow read: if true;
+      allow write: if isOwner();
+    }
+
+    match /links/{docId} {
+      allow read: if true;
+      allow write: if isOwner();
+    }
+
+    match /betaSignups/{docId} {
+      allow create: if true;
+      allow read, update, delete: if isOwner();
+    }
+
+    match /trialSignups/{docId} {
+      allow create: if true;
+      allow read, update, delete: if isOwner();
+    }
+
+    match /{document=**} {
+      allow read, write: if request.time < timestamp.date(2027, 7, 8) && isOwner();
+    }
+  }
+}

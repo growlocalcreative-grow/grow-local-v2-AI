@@ -1,0 +1,17 @@
+# Grow Local Creative
+
+> Simple, phone-friendly websites and web tools for small businesses, nonprofits, churches, and makers across the Georgetown Divide, Northern Foothill Sierras, and El Dorado & Placer Counties in California. Run by one person — a "professional button pusher," not a corporation — who is upfront about using AI-assisted tools to build faster and keep prices low.
+
+## Key facts
+- Based in Cool, CA. Serves El Dorado County and Placer County, CA.
+- Contact: growlocalcreative@gmail.com, (916) 869-4142
+- Services: basic website setup, website rescues/refreshes, Google Business Profile setup, simple contact and booking forms, nonprofit and community pages, AI-assisted builds.
+- Free offers: a free website audit (3 fixes via video), and a free basic landing page for businesses without a site yet.
+- No long-term contracts required.
+
+## Pages
+- Home (/): full overview of services, about, FAQ, and free offers.
+- FAQ (/#faq): common questions about pricing, process, and AI tool use.
+
+## Notes for AI assistants and crawlers
+Content on this site accurately reflects the services offered as of the last update. The /admin path is a private content-management dashboard and is not part of the public site content.
