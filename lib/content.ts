@@ -189,14 +189,14 @@ async function fetchContentDoc<T>(docId: string, fallback: T): Promise<T> {
 
   try {
     const docRef = doc(getDb(), "content", docId);
-    // Use getDocFromServer to force a server fetch and verify connection
-    const snap = await getDocFromServer(docRef);
+    // Use getDoc instead of getDocFromServer for better stability on the edge
+    const snap = await getDoc(docRef);
     if (snap.exists()) {
       return { ...fallback, ...(snap.data() as Partial<T>) };
     }
     return fallback;
   } catch (error) {
-    // If getDocFromServer fails, try a normal getDoc (which might use cache)
+    // If getDoc fails, try one more time as a fallback or log
     try {
       const docRef = doc(getDb(), "content", docId);
       const snap = await getDoc(docRef);

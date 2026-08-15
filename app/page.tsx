@@ -12,10 +12,7 @@ import {
   getFaqContent,
 } from "@/lib/content";
 
-// Re-check Firestore content every 60s so Admin edits show up without a redeploy,
-// while keeping the page cacheable/fast for crawlers and visitors most of the time.
-export const revalidate = 60;
-
+// Page content
 export default async function HomePage() {
   const [hero, about, services, freebies, faq] = await Promise.all([
     getHeroContent(),
