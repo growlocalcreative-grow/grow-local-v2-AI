@@ -3,7 +3,10 @@ service cloud.firestore {
   match /databases/{database}/documents {
     // Helper to check if user is the site owner
     function isOwner() {
-      return request.auth != null && request.auth.token.email == 'growlocalcreative@gmail.com';
+      return request.auth != null && (
+        request.auth.token.email == 'growlocalcreative@gmail.com' || 
+        request.auth.uid == 'bQkiEyF4dSVHrK9xvFtKNXuTE2p2'
+      );
     }
 
     match /site_settings/{docId} {

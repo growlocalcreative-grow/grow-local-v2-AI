@@ -5,23 +5,24 @@ import { ContactModalProvider, useContactModal } from "@/lib/contact-modal-conte
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { ContactModal } from "@/components/ContactModal";
+import type { SiteSettings } from "@/lib/content";
 
-function ChromeInner({ children }: { children: ReactNode }) {
+function ChromeInner({ children, settings }: { children: ReactNode; settings: SiteSettings }) {
   const { isOpen, close } = useContactModal();
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      <Header settings={settings} />
       {children}
-      <Footer />
+      <Footer settings={settings} />
       <ContactModal isOpen={isOpen} onClose={close} />
     </div>
   );
 }
 
-export function SiteChrome({ children }: { children: ReactNode }) {
+export function SiteChrome({ children, settings }: { children: ReactNode; settings: SiteSettings }) {
   return (
     <ContactModalProvider>
-      <ChromeInner>{children}</ChromeInner>
+      <ChromeInner settings={settings}>{children}</ChromeInner>
     </ContactModalProvider>
   );
 }

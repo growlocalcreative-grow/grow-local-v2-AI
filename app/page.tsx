@@ -12,6 +12,9 @@ import {
   getFaqContent,
 } from "@/lib/content";
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 // Page content
 export default async function HomePage() {
   const [hero, about, services, freebies, faq] = await Promise.all([

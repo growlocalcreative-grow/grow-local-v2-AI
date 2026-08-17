@@ -1,5 +1,5 @@
-import { doc, getDoc, getDocFromServer } from "firebase/firestore";
-import { getDb, isFirebaseConfigured } from "@/lib/firebase";
+import { getDocument } from "@/lib/firestore-server";
+import aiStudioConfig from "../firebase-applet-config.json";
 
 // --- Types ---
 
@@ -148,6 +148,29 @@ export interface FaqContent {
   items: FaqItem[];
 }
 
+export interface SocialLink {
+  platform: string;
+  url: string;
+  isEnabled: boolean;
+}
+
+export interface SiteSettings {
+  agencyName: string;
+  email: string;
+  phone: string;
+  location: string;
+  primaryColor: string;
+  primaryForeground: string;
+  secondaryColor: string;
+  secondaryForeground: string;
+  backgroundColor: string;
+  foregroundColor: string;
+  cardColor: string;
+  borderColor: string;
+  footerDescription: string;
+  socialLinks: SocialLink[];
+}
+
 export const DEFAULT_FAQ: FaqContent = {
   heading: "Common Questions",
   subheading: "The stuff folks usually ask before reaching out.",
@@ -180,43 +203,76 @@ export const DEFAULT_FAQ: FaqContent = {
   ],
 };
 
+export const DEFAULT_SETTINGS: SiteSettings = {
+  agencyName: "Grow Local Creative",
+  email: "growlocalcreative@gmail.com",
+  phone: "916-869-4142",
+  location: "Based in Cool, CA",
+  primaryColor: "#3D4337",
+  primaryForeground: "#F7F4ED",
+  secondaryColor: "#A1A68C",
+  secondaryForeground: "#3D4337",
+  backgroundColor: "#F7F4ED",
+  foregroundColor: "#1A1A1A",
+  cardColor: "#FFFFFF",
+  borderColor: "#E5E5E5",
+  footerDescription: "Helping small businesses, nonprofits, and makers across the Georgetown Divide push the right buttons so life stays simpler.",
+  socialLinks: [
+    { platform: "Instagram", url: "https://instagram.com/growlocalcreative", isEnabled: true },
+    { platform: "Facebook", url: "https://facebook.com/growlocalcreative", isEnabled: true },
+    { platform: "LinkedIn", url: "https://linkedin.com/company/growlocalcreative", isEnabled: false },
+  ],
+};
+
 
 
 async function fetchContentDoc<T>(docId: string, fallback: T): Promise<T> {
-  if (!isFirebaseConfigured()) {
+  const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || aiStudioConfig.projectId;
+  
+  if (!projectId) {
+    console.warn(`[Content] No project ID found. Skipping fetch for ${docId}`);
     return fallback;
   }
 
   try {
-    const docRef = doc(getDb(), "content", docId);
-    // Use getDoc instead of getDocFromServer for better stability on the edge
-    const snap = await getDoc(docRef);
-    if (snap.exists()) {
-      return { ...fallback, ...(snap.data() as Partial<T>) };
+    const data = await getDocument("content", docId);
+    if (data) {
+      console.log(`[Content] Successfully fetched ${docId} from Firestore`);
+      return { ...fallback, ...data } as T;
     }
+    console.log(`[Content] No document found for ${docId}, using defaults`);
     return fallback;
   } catch (error) {
-    // If getDoc fails, try one more time as a fallback or log
-    try {
-      const docRef = doc(getDb(), "content", docId);
-      const snap = await getDoc(docRef);
-      if (snap.exists()) {
-        return { ...fallback, ...(snap.data() as Partial<T>) };
-      }
-    } catch (e) {
-      // Fall through to error logging
-    }
-    
-    // Only log errors that aren't permission issues to avoid cluttering logs
-    if (error instanceof Error && !error.message.includes('permission')) {
-      console.warn(`Failed to load content/${docId} from Firestore. Using default values.`, error.message);
-    }
+    console.warn(`[Content] Failed to load content/${docId} from Firestore REST API. Using default values.`, error);
     return fallback;
   }
 }
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export const getHeroContent = () => fetchContentDoc<HeroContent>("hero", DEFAULT_HERO);
 export const getAboutContent = () => fetchContentDoc<AboutContent>("about", DEFAULT_ABOUT);
 export const getServicesContent = () => fetchContentDoc<ServicesContent>("services", DEFAULT_SERVICES);
 export const getFreebiesContent = () => fetchContentDoc<FreebiesContent>("freebies", DEFAULT_FREEBIES);
 export const getFaqContent = () => fetchContentDoc<FaqContent>("faq", DEFAULT_FAQ);
+
+export async function getSiteSettingsContent(): Promise<SiteSettings> {
+  const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || aiStudioConfig.projectId;
+  
+  if (!projectId) {
+    return DEFAULT_SETTINGS;
+  }
+
+  try {
+    const data = await getDocument("site_settings", "global");
+    if (data) {
+      console.log(`[Content] Successfully fetched site_settings from Firestore`);
+      return { ...DEFAULT_SETTINGS, ...data } as SiteSettings;
+    }
+    return DEFAULT_SETTINGS;
+  } catch (error) {
+    console.warn(`[Content] Failed to load site_settings from Firestore. Using defaults.`, error);
+    return DEFAULT_SETTINGS;
+  }
+}

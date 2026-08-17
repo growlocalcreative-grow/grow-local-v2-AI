@@ -16,29 +16,33 @@ import {
 import aiStudioConfig from '../firebase-applet-config.json';
 
 // --- Configuration ---
-// Prioritize the provisioned config file, then environment variables.
-const firebaseConfig = {
-  apiKey: aiStudioConfig.apiKey || process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: aiStudioConfig.authDomain || process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: aiStudioConfig.projectId || process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  messagingSenderId: aiStudioConfig.messagingSenderId || process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: aiStudioConfig.appId || process.env.NEXT_PUBLIC_FIREBASE_APP_ID
+// STRICTOR CONFIGURATION: Use JSON config as the source of truth to avoid environment variable mismatches
+export const firebaseConfig = {
+  apiKey: aiStudioConfig.apiKey,
+  authDomain: aiStudioConfig.authDomain || `${aiStudioConfig.projectId}.firebaseapp.com`,
+  projectId: aiStudioConfig.projectId,
+  storageBucket: aiStudioConfig.storageBucket,
+  messagingSenderId: aiStudioConfig.messagingSenderId,
+  appId: aiStudioConfig.appId
 };
 
-const DATABASE_ID = aiStudioConfig.firestoreDatabaseId || "ai-studio-growlocalv2-17ca32ba-0679-4238-a9ca-251639f520a7";
+const DATABASE_ID = aiStudioConfig.firestoreDatabaseId || "(default)";
 
 // Lazy initialization
 let db: Firestore | null = null;
 let auth: Auth | null = null;
 
 export function isFirebaseConfigured(): boolean {
-  return !!firebaseConfig.apiKey && !!firebaseConfig.projectId;
+  return typeof window !== 'undefined' && !!firebaseConfig.apiKey && !!firebaseConfig.projectId;
 }
 
 export function getFirebaseApp() {
   if (getApps().length > 0) return getApp();
   
   console.log(`[Firebase] Initializing App: ${firebaseConfig.projectId}`);
+  console.log(`[Firebase] Auth Domain: ${firebaseConfig.authDomain}`);
+  console.log(`[Firebase] API Key Prefix: ${firebaseConfig.apiKey?.substring(0, 8)}...`);
+  
   return initializeApp(firebaseConfig);
 }
 

@@ -8,8 +8,9 @@ import { motion } from "motion/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useContactModal } from "@/lib/contact-modal-context";
+import type { SiteSettings } from "@/lib/content";
 
-export function Header() {
+export function Header({ settings }: { settings: SiteSettings }) {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   const isHome = pathname === "/";
@@ -43,7 +44,7 @@ export function Header() {
                 referrerPolicy="no-referrer"
               />
             </div>
-            <span className="font-heading text-xl font-semibold tracking-tight hidden sm:block">Grow Local Creative</span>
+            <span className="font-heading text-xl font-semibold tracking-tight hidden sm:block">{settings.agencyName}</span>
           </Link>
         </motion.div>
 

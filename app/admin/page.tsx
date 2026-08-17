@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getAuthInstance, getDb, getSiteSettings, updateFirestoreDoc } from "@/lib/firebase";
+import { getAuthInstance, getDb, getSiteSettings, updateFirestoreDoc, firebaseConfig } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { signInWithPopup, GoogleAuthProvider, onAuthStateChanged, type User } from "firebase/auth";
 import { Button } from "@/components/ui/button";
@@ -18,6 +18,7 @@ import {
   DEFAULT_SERVICES,
   DEFAULT_FREEBIES,
   DEFAULT_FAQ,
+  DEFAULT_SETTINGS,
   type HeroContent,
   type AboutContent,
   type ServicesContent,
@@ -50,6 +51,7 @@ async function loadContentDoc<T>(docId: string, fallback: T): Promise<T> {
 export default function AdminPage() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const [settings, setSettings] = useState<any>(null);
   const [hero, setHero] = useState<HeroContent>(DEFAULT_HERO);
@@ -67,7 +69,14 @@ export default function AdminPage() {
       const unsubscribe = onAuthStateChanged(auth, (u) => {
         setUser(u);
         setLoading(false);
-        if (u) loadAll();
+        if (u) {
+          const isAdmin = u.email === 'growlocalcreative@gmail.com' || u.uid === 'bQkiEyF4dSVHrK9xvFtKNXuTE2p2';
+          if (isAdmin) {
+            loadAll();
+          } else {
+            setError("You are signed in, but you do not have admin permissions for this site.");
+          }
+        }
       });
       return () => unsubscribe();
     } catch (e) {
@@ -85,16 +94,13 @@ export default function AdminPage() {
       loadContentDoc("freebies", DEFAULT_FREEBIES),
       loadContentDoc("faq", DEFAULT_FAQ),
     ]);
-    setSettings(
-      siteSettings || {
-        agencyName: "Grow Local Creative",
-        email: "growlocalcreative@gmail.com",
-        primaryColor: "#000000",
-        secondaryColor: "#ffffff",
-        phone: "",
-        location: "Based in Cool, CA",
-      }
-    );
+    
+    // Merge database settings with code-level defaults to ensure all fields exist
+    setSettings({
+      ...DEFAULT_SETTINGS,
+      ...(siteSettings || {})
+    });
+
     setHero(heroData);
     setAbout(aboutData);
     setServices(servicesData);
@@ -104,10 +110,26 @@ export default function AdminPage() {
 
   async function handleLogin() {
     const provider = new GoogleAuthProvider();
+    setError(null);
     try {
-      await signInWithPopup(getAuthInstance(), provider);
-    } catch (error) {
+      const auth = getAuthInstance();
+      const { browserPopupRedirectResolver } = await import("firebase/auth");
+      
+      console.log("[Auth] Attempting login for project:", auth.app.options.projectId);
+      console.log("[Auth] Current origin:", window.location.origin);
+      
+      await signInWithPopup(auth, provider, browserPopupRedirectResolver);
+    } catch (error: any) {
       console.error("Login failed:", error);
+      
+      let friendlyMessage = error.message;
+      if (error.code === 'auth/invalid-continue-uri') {
+        friendlyMessage = "The URL you are trying to return to is not whitelisted in your Firebase Console. Please check 'Authorized Domains' settings.";
+      } else if (error.code === 'auth/unauthorized-domain') {
+        friendlyMessage = "This domain is not whitelisted in your Firebase project's Authentication settings.";
+      }
+      
+      setError(`${friendlyMessage} (Error code: ${error.code || 'unknown'})`);
     }
   }
 
@@ -127,7 +149,7 @@ export default function AdminPage() {
 
   if (loading) return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
 
-  if (!user) {
+  if (!user || error?.includes("admin permissions")) {
     return (
       <div className="flex items-center justify-center min-h-[60vh] p-4">
         <Card className="w-full max-w-md">
@@ -135,11 +157,43 @@ export default function AdminPage() {
             <div className="mx-auto w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
               <Lock className="w-6 h-6 text-primary" />
             </div>
-            <CardTitle>Admin Access</CardTitle>
-            <CardDescription>Sign in with your Google account to manage Grow Local Creative.</CardDescription>
+            <CardTitle>{error?.includes("admin permissions") ? "Unauthorized" : "Admin Access"}</CardTitle>
+            <CardDescription>
+              {error?.includes("admin permissions") 
+                ? "You do not have permission to access this dashboard. Please sign in with an admin account."
+                : "Sign in with your Google account to manage Grow Local Creative."}
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button onClick={handleLogin} className="w-full">Sign in with Google</Button>
+            {error && (
+              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                <div className="flex items-center gap-2 text-red-700 mb-2">
+                  <AlertCircle className="w-5 h-5" />
+                  <span className="font-medium">{error?.includes("admin permissions") ? "Access Denied" : "Login failed"}</span>
+                </div>
+                <p className="text-sm text-red-600 mb-4">{error}</p>
+                
+                {error.includes('unauthorized-domain') && (
+                  <div className="mt-2 pt-4 border-t border-red-100">
+                    <p className="text-xs font-bold text-red-800 uppercase mb-2">Debug Information:</p>
+                    <div className="space-y-2 text-xs text-red-700 bg-white/50 p-2 rounded">
+                      <p><strong>Project ID:</strong> {firebaseConfig.projectId}</p>
+                      <p><strong>API Key (Start):</strong> {firebaseConfig.apiKey?.substring(0, 8)}...</p>
+                      <p><strong>Auth Domain:</strong> {firebaseConfig.authDomain}</p>
+                      <p><strong>Whitelisted Domain Needed:</strong> {typeof window !== 'undefined' ? window.location.hostname : 'loading...'}</p>
+                    </div>
+                    <p className="mt-3 text-xs text-red-600 italic">
+                      1. Check that the Project ID matches your Firebase project.<br />
+                      2. Ensure the "Auth Domain" is whitelisted in Firebase Console (Auth &gt; Settings &gt; Authorized Domains).<br />
+                      3. Ensure the "Whitelisted Domain" is ALSO added to your "Authorized Domains".
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+            <Button onClick={error?.includes("admin permissions") ? () => { getAuthInstance().signOut(); setError(null); } : handleLogin} className="w-full">
+              {error?.includes("admin permissions") ? "Sign out and switch accounts" : "Sign in with Google"}
+            </Button>
           </CardContent>
         </Card>
       </div>
@@ -582,18 +636,152 @@ export default function AdminPage() {
                   <Input id="location" value={settings?.location || ""} onChange={(e) => setSettings({ ...settings, location: e.target.value })} />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="primaryColor">Primary Color</Label>
+                  <Label htmlFor="primaryColor">Primary Color (Buttons, Icons)</Label>
                   <div className="flex gap-2">
-                    <Input id="primaryColor" type="color" className="w-12 h-10 p-1" value={settings?.primaryColor || "#000000"} onChange={(e) => setSettings({ ...settings, primaryColor: e.target.value })} />
+                    <Input id="primaryColor" type="color" className="w-12 h-10 p-1" value={settings?.primaryColor || "#3D4337"} onChange={(e) => setSettings({ ...settings, primaryColor: e.target.value })} />
                     <Input value={settings?.primaryColor || ""} onChange={(e) => setSettings({ ...settings, primaryColor: e.target.value })} />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="secondaryColor">Secondary Color</Label>
+                  <Label htmlFor="primaryForeground">Primary Foreground (Text on Buttons)</Label>
                   <div className="flex gap-2">
-                    <Input id="secondaryColor" type="color" className="w-12 h-10 p-1" value={settings?.secondaryColor || "#ffffff"} onChange={(e) => setSettings({ ...settings, secondaryColor: e.target.value })} />
+                    <Input id="primaryForeground" type="color" className="w-12 h-10 p-1" value={settings?.primaryForeground || "#F7F4ED"} onChange={(e) => setSettings({ ...settings, primaryForeground: e.target.value })} />
+                    <Input value={settings?.primaryForeground || ""} onChange={(e) => setSettings({ ...settings, primaryForeground: e.target.value })} />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="secondaryColor">Secondary Color (Accents, Hero Emphasis)</Label>
+                  <div className="flex gap-2">
+                    <Input id="secondaryColor" type="color" className="w-12 h-10 p-1" value={settings?.secondaryColor || "#A1A68C"} onChange={(e) => setSettings({ ...settings, secondaryColor: e.target.value })} />
                     <Input value={settings?.secondaryColor || ""} onChange={(e) => setSettings({ ...settings, secondaryColor: e.target.value })} />
                   </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="secondaryForeground">Secondary Foreground (Text on Accents)</Label>
+                  <div className="flex gap-2">
+                    <Input id="secondaryForeground" type="color" className="w-12 h-10 p-1" value={settings?.secondaryForeground || "#3D4337"} onChange={(e) => setSettings({ ...settings, secondaryForeground: e.target.value })} />
+                    <Input value={settings?.secondaryForeground || ""} onChange={(e) => setSettings({ ...settings, secondaryForeground: e.target.value })} />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="backgroundColor">Background Color</Label>
+                  <div className="flex gap-2">
+                    <Input id="backgroundColor" type="color" className="w-12 h-10 p-1" value={settings?.backgroundColor || "#F7F4ED"} onChange={(e) => setSettings({ ...settings, backgroundColor: e.target.value })} />
+                    <Input value={settings?.backgroundColor || ""} onChange={(e) => setSettings({ ...settings, backgroundColor: e.target.value })} />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="foregroundColor">Text Color (Foreground)</Label>
+                  <div className="flex gap-2">
+                    <Input id="foregroundColor" type="color" className="w-12 h-10 p-1" value={settings?.foregroundColor || "#1A1A1A"} onChange={(e) => setSettings({ ...settings, foregroundColor: e.target.value })} />
+                    <Input value={settings?.foregroundColor || ""} onChange={(e) => setSettings({ ...settings, foregroundColor: e.target.value })} />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="cardColor">Card Background Color</Label>
+                  <div className="flex gap-2">
+                    <Input id="cardColor" type="color" className="w-12 h-10 p-1" value={settings?.cardColor || "#FFFFFF"} onChange={(e) => setSettings({ ...settings, cardColor: e.target.value })} />
+                    <Input value={settings?.cardColor || ""} onChange={(e) => setSettings({ ...settings, cardColor: e.target.value })} />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="borderColor">Border Color</Label>
+                  <div className="flex gap-2">
+                    <Input id="borderColor" type="color" className="w-12 h-10 p-1" value={settings?.borderColor || "#E5E5E5"} onChange={(e) => setSettings({ ...settings, borderColor: e.target.value })} />
+                    <Input value={settings?.borderColor || ""} onChange={(e) => setSettings({ ...settings, borderColor: e.target.value })} />
+                  </div>
+                </div>
+
+                <div className="h-px bg-border my-6" />
+                <h3 className="text-lg font-medium">Footer Content</h3>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="footerDescription">Footer Description</Label>
+                  <Textarea 
+                    id="footerDescription" 
+                    value={settings?.footerDescription || ""} 
+                    onChange={(e) => setSettings({ ...settings, footerDescription: e.target.value })} 
+                    className="min-h-[100px]"
+                  />
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <Label>Social Links</Label>
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => {
+                        const newLinks = [...(settings?.socialLinks || [])];
+                        newLinks.push({ platform: "Instagram", url: "", isEnabled: true });
+                        setSettings({ ...settings, socialLinks: newLinks });
+                      }}
+                    >
+                      Add Link
+                    </Button>
+                  </div>
+                  
+                  {(settings?.socialLinks || []).map((link, idx) => (
+                    <div key={idx} className="flex gap-4 items-end border p-3 rounded-md">
+                      <div className="flex-1 space-y-2">
+                        <Label>Platform</Label>
+                        <select 
+                          className="w-full h-10 px-3 py-2 rounded-md border border-input bg-background text-sm"
+                          value={link.platform}
+                          onChange={(e) => {
+                            const newLinks = [...settings.socialLinks];
+                            newLinks[idx].platform = e.target.value;
+                            setSettings({ ...settings, socialLinks: newLinks });
+                          }}
+                        >
+                          <option value="Instagram">Instagram</option>
+                          <option value="Facebook">Facebook</option>
+                          <option value="Linkedin">LinkedIn</option>
+                          <option value="Twitter">Twitter</option>
+                          <option value="Youtube">YouTube</option>
+                          <option value="Github">GitHub</option>
+                          <option value="Website">Other Website</option>
+                        </select>
+                      </div>
+                      <div className="flex-[2] space-y-2">
+                        <Label>URL</Label>
+                        <Input 
+                          value={link.url} 
+                          onChange={(e) => {
+                            const newLinks = [...settings.socialLinks];
+                            newLinks[idx].url = e.target.value;
+                            setSettings({ ...settings, socialLinks: newLinks });
+                          }} 
+                          placeholder="https://..."
+                        />
+                      </div>
+                      <div className="flex flex-col gap-2 items-center pb-2">
+                        <Label className="text-xs">Show</Label>
+                        <input 
+                          type="checkbox" 
+                          checked={link.isEnabled} 
+                          onChange={(e) => {
+                            const newLinks = [...settings.socialLinks];
+                            newLinks[idx].isEnabled = e.target.checked;
+                            setSettings({ ...settings, socialLinks: newLinks });
+                          }}
+                        />
+                      </div>
+                      <Button 
+                        type="button" 
+                        variant="ghost" 
+                        size="icon" 
+                        className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                        onClick={() => {
+                          const newLinks = settings.socialLinks.filter((_, i) => i !== idx);
+                          setSettings({ ...settings, socialLinks: newLinks });
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
                 </div>
               </div>
 
