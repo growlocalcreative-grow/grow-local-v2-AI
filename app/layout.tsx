@@ -28,7 +28,7 @@ export async function generateMetadata(): Promise<Metadata> {
       icon: "/Grow Local Creative_Green.ico",
     },
     verification: {
-      google: "google495642fdbf4970d7",
+      google: "7s9Nx1UeeBbX0Emq0X4v4U1Y6f-Z4-40L14",
     },
   };
 }
