@@ -3,23 +3,25 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Phone, MessageSquare, Mail, Share2, X, Check } from "lucide-react";
+import type { SiteSettings } from "@/lib/content";
 
 interface ContactModalProps {
   isOpen: boolean;
   onClose: () => void;
+  settings?: SiteSettings;
 }
 
-export function ContactModal({ isOpen, onClose }: ContactModalProps) {
+export function ContactModal({ isOpen, onClose, settings }: ContactModalProps) {
   const [copied, setCopied] = useState(false);
 
-  const phoneNumber = "9168694142";
-  const email = "growlocalcreative@gmail.com";
+  const phoneNumber = settings?.phone.replace(/[^0-9]/g, '') || "9168694142";
+  const email = settings?.email || "growlocalcreative@gmail.com";
   
-  const smsBody = "Hey Renee, I'm a local contractor and wasted time on estimates is killing me. Got time to chat?";
-  const emailSubject = "Automation Help for My Business";
-  const emailBody = "Hi Renee, I saw the Grow Local Creative site. I'd love to chat about setting up some simple pricing or lead tools for my trade business.";
+  const smsBody = "Hey Renee, I'm interested in some simple tools to get my business online. Got time to chat?";
+  const emailSubject = "Getting My Local Business Online";
+  const emailBody = "Hi Renee, I saw the Grow Local Creative site. I'd love to chat about some simple tools to help get my local business online and simplify things.";
   
-  const shareText = "Check out Grow Local Creative—they build simple tools to help local contractors save time on bids and estimates: https://growlocalcreative.com";
+  const shareText = `Check out ${settings?.agencyName || 'Grow Local Creative'}—they build simple tools to help local businesses get online and stay connected with neighbors: https://growlocalcreative.com`;
   const shareUrl = "https://growlocalcreative.com";
 
   const handleShare = async () => {

@@ -1,0 +1,55 @@
+{
+  "entities": {
+    "SiteSettings": {
+      "title": "Site Settings",
+      "description": "Global configuration for the agency site",
+      "type": "object",
+      "properties": {
+        "agencyName": { "type": "string" },
+        "email": { "type": "string" },
+        "phone": { "type": "string" },
+        "location": { "type": "string" },
+        "footerDescription": { "type": "string" },
+        "sectionOrder": { "type": "array" },
+        "hiddenSections": { "type": "array" },
+        "newsletter": { "type": "object" },
+        "socialLinks": { "type": "array" }
+      }
+    },
+    "Content": {
+      "title": "Page Content",
+      "description": "Generic content document for page sections",
+      "type": "object",
+      "properties": {
+        "heading": { "type": "string" },
+        "subheading": { "type": "string" },
+        "backgroundColor": { "type": "string" },
+        "textColor": { "type": "string" }
+      }
+    },
+    "Subscriber": {
+      "title": "Subscriber",
+      "description": "Newsletter subscriber",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string", "format": "email" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["email", "createdAt"]
+    }
+  },
+  "firestore": {
+    "site_settings/{settingsId}": {
+      "schema": "SiteSettings",
+      "description": "Global site configuration"
+    },
+    "content/{contentId}": {
+      "schema": "Content",
+      "description": "Section-specific content"
+    },
+    "subscribers/{subscriberId}": {
+      "schema": "Subscriber",
+      "description": "Newsletter email list"
+    }
+  }
+}

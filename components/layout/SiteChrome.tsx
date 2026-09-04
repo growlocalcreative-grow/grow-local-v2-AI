@@ -5,6 +5,7 @@ import { ContactModalProvider, useContactModal } from "@/lib/contact-modal-conte
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { ContactModal } from "@/components/ContactModal";
+import { NewsletterModal } from "@/components/NewsletterModal";
 import type { SiteSettings } from "@/lib/content";
 
 function ChromeInner({ children, settings }: { children: ReactNode; settings: SiteSettings }) {
@@ -14,7 +15,8 @@ function ChromeInner({ children, settings }: { children: ReactNode; settings: Si
       <Header settings={settings} />
       {children}
       <Footer settings={settings} />
-      <ContactModal isOpen={isOpen} onClose={close} />
+      <ContactModal isOpen={isOpen} onClose={close} settings={settings} />
+      <NewsletterModal settings={settings} />
     </div>
   );
 }

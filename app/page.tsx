@@ -9,7 +9,9 @@ import {
   getAboutContent,
   getServicesContent,
   getFreebiesContent,
+  getFutureContent,
   getFaqContent,
+  getSiteSettingsContent,
 } from "@/lib/content";
 
 export const dynamic = 'force-dynamic';
@@ -17,22 +19,41 @@ export const revalidate = 0;
 
 // Page content
 export default async function HomePage() {
-  const [hero, about, services, freebies, faq] = await Promise.all([
+  const [hero, about, services, freebies, future, faq, settings] = await Promise.all([
     getHeroContent(),
     getAboutContent(),
     getServicesContent(),
     getFreebiesContent(),
+    getFutureContent(),
     getFaqContent(),
+    getSiteSettingsContent(),
   ]);
+
+  const order = settings.sectionOrder || ["hero", "about", "services", "future", "freebies", "faq"];
+  const visibleOrder = order.filter(id => !(settings.hiddenSections || []).includes(id));
+
+  const renderSection = (id: string) => {
+    switch (id) {
+      case "hero":
+        return <Hero key="hero" data={hero} />;
+      case "about":
+        return <About key="about" data={about} />;
+      case "services":
+        return <Services key="services" data={services} />;
+      case "future":
+        return <Future key="future" data={future} />;
+      case "freebies":
+        return <Freebies key="freebies" data={freebies} />;
+      case "faq":
+        return <FAQ key="faq" data={faq} />;
+      default:
+        return null;
+    }
+  };
 
   return (
     <main className="flex-grow">
-      <Hero data={hero} />
-      <About data={about} />
-      <Services data={services} />
-      <Future />
-      <Freebies data={freebies} />
-      <FAQ data={faq} />
+      {visibleOrder.map(renderSection)}
     </main>
   );
 }

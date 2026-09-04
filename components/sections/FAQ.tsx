@@ -18,7 +18,14 @@ export function FAQ({ data }: { data: FaqContent }) {
   };
 
   return (
-    <section id="faq" className="py-24 bg-background">
+    <section 
+      id="faq" 
+      className="py-24"
+      style={{ 
+        backgroundColor: data.backgroundColor || 'var(--background)',
+        color: data.textColor || 'var(--foreground)'
+      }}
+    >
       {/* Structured data so AI answer engines and Google can lift Q&A pairs directly */}
       <script
         type="application/ld+json"
@@ -27,15 +34,15 @@ export function FAQ({ data }: { data: FaqContent }) {
       />
       <div className="container mx-auto px-4 max-w-3xl">
         <div className="text-center mb-12 space-y-3">
-          <h2 className="font-heading text-4xl md:text-5xl font-medium text-foreground">{data.heading}</h2>
-          <p className="text-muted-foreground text-lg">{data.subheading}</p>
+          <h2 className="font-heading text-4xl md:text-5xl font-medium">{data.heading}</h2>
+          <p className="opacity-70 text-lg">{data.subheading}</p>
         </div>
 
         <Accordion type="single" collapsible className="w-full">
           {data.items.map((item, i) => (
             <AccordionItem key={i} value={`item-${i}`}>
               <AccordionTrigger className="text-left font-heading text-lg">{item.question}</AccordionTrigger>
-              <AccordionContent className="text-muted-foreground leading-relaxed">{item.answer}</AccordionContent>
+              <AccordionContent className="opacity-70 leading-relaxed">{item.answer}</AccordionContent>
             </AccordionItem>
           ))}
         </Accordion>

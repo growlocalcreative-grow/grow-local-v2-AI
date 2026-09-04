@@ -10,7 +10,13 @@ export function Hero({ data }: { data: HeroContent }) {
   const { open: onContactOpen } = useContactModal();
 
   return (
-    <section className="relative overflow-hidden bg-background pt-20 pb-24 md:pt-32 md:pb-40">
+    <section 
+      className="relative overflow-hidden pt-20 pb-24 md:pt-32 md:pb-40"
+      style={{ 
+        backgroundColor: data.backgroundColor || 'var(--background)',
+        color: data.textColor || 'var(--foreground)'
+      }}
+    >
       <div className="absolute top-0 right-0 -z-10 h-[500px] w-[500px] rounded-full bg-secondary/10 blur-3xl" />
       <div className="absolute bottom-0 left-0 -z-10 h-[400px] w-[400px] rounded-full bg-primary/5 blur-3xl" />
 

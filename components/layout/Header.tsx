@@ -16,11 +16,21 @@ export function Header({ settings }: { settings: SiteSettings }) {
   const isHome = pathname === "/";
   const { open: onContactOpen } = useContactModal();
 
+  const sectionMap: Record<string, { name: string; href: string }> = {
+    about: { name: "About", href: isHome ? "#about" : "/#about" },
+    future: { name: "Upcoming Tools", href: isHome ? "#upcoming" : "/#upcoming" },
+    services: { name: "Services", href: isHome ? "#services" : "/#services" },
+    freebies: { name: "Free Tools", href: isHome ? "#freebies" : "/#freebies" },
+    faq: { name: "FAQ", href: isHome ? "#faq" : "/#faq" },
+  };
+
+  const dynamicLinks = (settings.sectionOrder || ["hero", "about", "services", "future", "freebies", "faq"])
+    .filter(id => id !== "hero" && !(settings.hiddenSections || []).includes(id))
+    .map(id => sectionMap[id])
+    .filter(Boolean);
+
   const navLinks = [
-    { name: "About", href: isHome ? "#about" : "/#about" },
-    { name: "Upcoming Tools", href: isHome ? "#upcoming" : "/#upcoming" },
-    { name: "Services", href: isHome ? "#services" : "/#services" },
-    { name: "Free Tools", href: isHome ? "#freebies" : "/#freebies" },
+    ...dynamicLinks,
     { name: "Admin Login", href: "/admin", icon: Lock },
   ];
 

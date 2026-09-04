@@ -11,7 +11,8 @@ import {
   updateDoc,
   setDoc,
   getDocFromServer,
-  Firestore
+  Firestore,
+  serverTimestamp
 } from 'firebase/firestore';
 import aiStudioConfig from '../firebase-applet-config.json';
 
@@ -174,5 +175,20 @@ export async function updateFirestoreDoc(collectionName: string, docId: string, 
     console.log(`Document ${path} successfully updated.`);
   } catch (error) {
     handleFirestoreError(error, OperationType.WRITE, path);
+  }
+}
+
+export async function subscribeToNewsletter(email: string) {
+  const path = 'subscribers';
+  try {
+    const subscriberId = email.toLowerCase().replace(/[^a-z0-9]/g, '_');
+    const docRef = doc(getDb(), 'subscribers', subscriberId);
+    await setDoc(docRef, {
+      email,
+      createdAt: serverTimestamp()
+    });
+    console.log(`Successfully subscribed ${email}`);
+  } catch (error) {
+    handleFirestoreError(error, OperationType.CREATE, path);
   }
 }

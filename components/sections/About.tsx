@@ -5,7 +5,14 @@ import type { AboutContent } from "@/lib/content";
 
 export function About({ data }: { data: AboutContent }) {
   return (
-    <section id="about" className="py-24 bg-[#FAF9F5]">
+    <section 
+      id="about" 
+      className="py-24"
+      style={{ 
+        backgroundColor: data.backgroundColor || '#FAF9F5',
+        color: data.textColor || 'var(--foreground)'
+      }}
+    >
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           <motion.div

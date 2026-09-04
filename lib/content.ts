@@ -9,12 +9,16 @@ export interface HeroContent {
   headlineEmphasis: string;
   subhead: string;
   ctaLabel: string;
+  backgroundColor?: string;
+  textColor?: string;
 }
 
 export interface AboutContent {
   badgeText: string;
   heading: string;
   paragraphs: string[];
+  backgroundColor?: string;
+  textColor?: string;
 }
 
 export interface ServiceItem {
@@ -28,6 +32,8 @@ export interface ServicesContent {
   heading: string;
   subheading: string;
   items: ServiceItem[];
+  backgroundColor?: string;
+  textColor?: string;
 }
 
 export interface FreebieItem {
@@ -43,6 +49,23 @@ export interface FreebiesContent {
   heading: string;
   subheading: string;
   items: FreebieItem[];
+  backgroundColor?: string;
+  textColor?: string;
+}
+
+export interface FutureItem {
+  title: string;
+  description: string;
+  icon: string;
+  slug: string;
+}
+
+export interface FutureContent {
+  heading: string;
+  subheading: string;
+  items: FutureItem[];
+  backgroundColor?: string;
+  textColor?: string;
 }
 
 // --- Defaults (used until an admin edits + saves content in Firestore) ---
@@ -54,6 +77,8 @@ export const DEFAULT_HERO: HeroContent = {
   subhead:
     "I'm your neighborhood professional button pusher — helping small businesses, nonprofits, churches, and local makers across the Divide get a simple, working website without the tech headache. No jargon, no big-agency price tag, just a neighbor who's good with computers.",
   ctaLabel: "Let's Chat",
+  backgroundColor: "#F7F4ED",
+  textColor: "#1A1A1A",
 };
 
 export const DEFAULT_ABOUT: AboutContent = {
@@ -65,6 +90,8 @@ export const DEFAULT_ABOUT: AboutContent = {
     "I'll also be upfront with you: I lean on AI tools to help me build faster and keep my prices down. Sometimes that means the code under the hood isn't picture-perfect because of my own prompts — but the site you see and use works, and I test everything myself before it ever goes live.",
     "Whether you need a simple one-page site, help getting found on Google, or just someone to explain what all this \"online\" stuff even means, I'm here to push the buttons so you don't have to.",
   ],
+  backgroundColor: "#FFFFFF",
+  textColor: "#1A1A1A",
 };
 
 export const DEFAULT_SERVICES: ServicesContent = {
@@ -110,6 +137,8 @@ export const DEFAULT_SERVICES: ServicesContent = {
       icon: "Sparkles",
     },
   ],
+  backgroundColor: "#F7F4ED",
+  textColor: "#1A1A1A",
 };
 
 export const DEFAULT_FREEBIES: FreebiesContent = {
@@ -124,7 +153,7 @@ export const DEFAULT_FREEBIES: FreebiesContent = {
         "Got an existing site but not getting any calls or messages? I'll look it over and send you a quick video with 3 simple fixes to stop losing folks.",
       icon: "Search",
       buttonText: "Get My Free Audit",
-      href: "mailto:growlocalcreative@gmail.com?subject=Free%20Website%20Audit%20Request&body=Hi%20Renee%2C%20I'd%20love%20a%20free%20audit%20on%20my%20current%20website%20to%20see%20where%20I'm%20losing%20folks.%20Here%20is%20my%20current%20domain%3A",
+      href: "mailto:growlocalcreative@gmail.com?subject=Free%20Website%20Audit%20Request&body=Hi%20Renee%2C%20I'd%20love%20a%20free%20audit%20to%20see%20how%20I%20can%20get%20my%20business%20found%20online%20more%20easily.%20Here%20is%20my%20current%20domain%3A",
     },
     {
       title: "Free Business Landing Page",
@@ -132,9 +161,38 @@ export const DEFAULT_FREEBIES: FreebiesContent = {
         "Don't have a website at all? Let's get you on the map. I'll set up a simple, clean, single-page site so local folks can actually find you — whether you run a small shop, a nonprofit, or a side hustle.",
       icon: "Monitor",
       buttonText: "Claim My Free Page",
-      href: "mailto:growlocalcreative@gmail.com?subject=Free%20Landing%20Page%20Inquiry&body=Hi%20Renee%2C%20I%20don't%20have%20a%20website%20yet%20and%20I'd%20love%20to%20chat%20about%20setting%20up%20a%20free%20basic%20landing%20page%20for%20my%20business.",
+      href: "mailto:growlocalcreative@gmail.com?subject=Free%20Landing%20Page%20Inquiry&body=Hi%20Renee%2C%20I%20don't%20have%20a%20website%20yet%20and%20I'd%20love%20to%20chat%20about%20a%20simple%20landing%20page%20to%20get%20my%20business%20online.",
     },
   ],
+  backgroundColor: "#F7F4ED",
+  textColor: "#1A1A1A",
+};
+
+export const DEFAULT_FUTURE: FutureContent = {
+  heading: "What's Coming Next",
+  subheading: "Building one neighbor at a time, for the real problems I keep seeing.",
+  items: [
+    {
+      title: "Branded Mini CMS",
+      description: "The same simple content editor built for this site, given to your business too — update your own text and offers anytime, no code required.",
+      icon: "LayoutTemplate",
+      slug: "branded-mini-cms",
+    },
+    {
+      title: "Link-in-Bio Page",
+      description: "One clean link you can put on a flyer, business card, or QR code, pointing people to everything: your site, socials, and a way to reach you.",
+      icon: "Link2",
+      slug: "link-in-bio",
+    },
+    {
+      title: "Simple Contact Tracker",
+      description: "A lightweight way to keep notes on customers, donors, or members — built for folks who are done wrestling with spreadsheets.",
+      icon: "Users",
+      slug: "simple-contact-tracker",
+    },
+  ],
+  backgroundColor: "#F7F4ED",
+  textColor: "#1A1A1A",
 };
 
 export interface FaqItem {
@@ -146,6 +204,8 @@ export interface FaqContent {
   heading: string;
   subheading: string;
   items: FaqItem[];
+  backgroundColor?: string;
+  textColor?: string;
 }
 
 export interface SocialLink {
@@ -169,6 +229,15 @@ export interface SiteSettings {
   borderColor: string;
   footerDescription: string;
   socialLinks: SocialLink[];
+  sectionOrder: string[];
+  hiddenSections: string[];
+  newsletter: {
+    isEnabled: boolean;
+    title: string;
+    description: string;
+    cta: string;
+    successMessage: string;
+  };
 }
 
 export const DEFAULT_FAQ: FaqContent = {
@@ -201,6 +270,8 @@ export const DEFAULT_FAQ: FaqContent = {
         "No long contracts. We talk about what you need, I give you a straightforward price, and we go from there — neighbor to neighbor.",
     },
   ],
+  backgroundColor: "#FFFFFF",
+  textColor: "#1A1A1A",
 };
 
 export const DEFAULT_SETTINGS: SiteSettings = {
@@ -222,6 +293,15 @@ export const DEFAULT_SETTINGS: SiteSettings = {
     { platform: "Facebook", url: "https://facebook.com/growlocalcreative", isEnabled: true },
     { platform: "LinkedIn", url: "https://linkedin.com/company/growlocalcreative", isEnabled: false },
   ],
+  sectionOrder: ["hero", "about", "services", "future", "freebies", "faq", "newsletter"],
+  hiddenSections: [],
+  newsletter: {
+    isEnabled: true,
+    title: "Let's stay connected across the Divide.",
+    description: "Every once in a while, I share a quick, jargon-free tip to help local businesses and non-profits run smoother online. No spam, ever.",
+    cta: "Drop Me a Line",
+    successMessage: "Thanks for joining! Keep an eye on your inbox for neighborly updates."
+  }
 };
 
 
@@ -248,13 +328,11 @@ async function fetchContentDoc<T>(docId: string, fallback: T): Promise<T> {
   }
 }
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
-
 export const getHeroContent = () => fetchContentDoc<HeroContent>("hero", DEFAULT_HERO);
 export const getAboutContent = () => fetchContentDoc<AboutContent>("about", DEFAULT_ABOUT);
 export const getServicesContent = () => fetchContentDoc<ServicesContent>("services", DEFAULT_SERVICES);
 export const getFreebiesContent = () => fetchContentDoc<FreebiesContent>("freebies", DEFAULT_FREEBIES);
+export const getFutureContent = () => fetchContentDoc<FutureContent>("future", DEFAULT_FUTURE);
 export const getFaqContent = () => fetchContentDoc<FaqContent>("faq", DEFAULT_FAQ);
 
 export async function getSiteSettingsContent(): Promise<SiteSettings> {

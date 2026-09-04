@@ -6,11 +6,18 @@ import type { ServicesContent } from "@/lib/content";
 
 export function Services({ data }: { data: ServicesContent }) {
   return (
-    <section id="services" className="py-24 bg-primary text-primary-foreground">
+    <section 
+      id="services" 
+      className="py-24"
+      style={{ 
+        backgroundColor: data.backgroundColor || 'var(--primary)',
+        color: data.textColor || 'var(--primary-foreground)'
+      }}
+    >
       <div className="container mx-auto px-4">
         <div className="max-w-3xl mb-16">
           <h2 className="font-heading text-4xl md:text-6xl font-medium mb-6">{data.heading}</h2>
-          <p className="text-primary-foreground/70 text-xl leading-relaxed">{data.subheading}</p>
+          <p className="opacity-70 text-xl leading-relaxed">{data.subheading}</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-12 gap-y-16">
@@ -56,7 +63,7 @@ export function Services({ data }: { data: ServicesContent }) {
                         </span>
                       )}
                     </div>
-                    <p className="text-primary-foreground/60 leading-relaxed text-base md:text-lg">
+                    <p className="opacity-60 leading-relaxed text-base md:text-lg">
                       {service.description}
                     </p>
                   </div>

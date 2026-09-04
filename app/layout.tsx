@@ -2,19 +2,32 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import { SiteChrome } from "@/components/layout/SiteChrome";
 import { ScrollToTop } from "@/components/ScrollToTop";
-import { getSiteSettingsContent } from "@/lib/content";
+import { getSiteSettingsContent, getFaqContent, getServicesContent } from "@/lib/content";
 import "./globals.css";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettingsContent();
   return {
     metadataBase: new URL("https://growlocalcreative.com"),
     title: {
-      default: `${settings.agencyName} | Simple Websites for Local Businesses`,
+      default: `${settings.agencyName} | Web Design for Georgetown Divide`,
       template: `%s | ${settings.agencyName}`,
     },
     description:
-      "Simple, phone-friendly websites for small businesses, nonprofits, churches, and makers across the Georgetown Divide, Northern Foothill Sierras, and El Dorado & Placer Counties. No jargon, no big-agency price tag.",
+      "Simple, phone-friendly websites for small businesses, nonprofits, and makers across the Georgetown Divide, Northern Foothill Sierras, and El Dorado & Placer Counties. No jargon, no big-agency price tag.",
+    keywords: [
+      "Web Design Georgetown Divide",
+      "Small Business Website Cool CA",
+      "Nonprofit Web Design El Dorado County",
+      "Local SEO Cool CA",
+      "Foothill Sierra Web Development",
+      "Simple Websites for Makers",
+      "Grow Local Creative",
+      "Georgetown CA Website Builder"
+    ],
     openGraph: {
       title: `${settings.agencyName} | Simple Websites for Local Businesses`,
       description:
@@ -34,7 +47,22 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const settings = await getSiteSettingsContent();
+  const [settings, faqData, servicesData] = await Promise.all([
+    getSiteSettingsContent(),
+    getFaqContent(),
+    getServicesContent()
+  ]);
+
+  const organizationJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": settings.agencyName,
+    "url": "https://growlocalcreative.com",
+    "logo": "https://growlocalcreative.com/logo.png",
+    "email": settings.email,
+    "telephone": settings.phone,
+    "sameAs": settings.socialLinks.filter(l => l.isEnabled).map(l => l.url)
+  };
 
   const localBusinessJsonLd = {
     "@context": "https://schema.org",
@@ -53,6 +81,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       "addressLocality": "Cool",
       "addressRegion": "CA",
       "addressCountry": "US"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 38.8924,
+      "longitude": -121.0163
     },
     "areaServed": [
       { "@type": "AdministrativeArea", "name": "El Dorado County, CA" },
@@ -80,6 +113,46 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       "contactType": "customer service",
       "email": settings.email,
       "availableLanguage": "English"
+    }
+  };
+
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqData.items.map(item => ({
+      "@type": "Question",
+      "name": item.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": item.answer
+      }
+    }))
+  };
+
+  const servicesJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "serviceType": "Web Design and SEO for Local Businesses",
+    "provider": {
+      "@type": "ProfessionalService",
+      "name": settings.agencyName
+    },
+    "areaServed": {
+      "@type": "State",
+      "name": "California"
+    },
+    "hasOfferCatalog": {
+      "@type": "OfferCatalog",
+      "name": "Web Services",
+      "itemListElement": servicesData.items.map((s, i) => ({
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": s.title,
+          "description": s.description
+        },
+        "position": i + 1
+      }))
     }
   };
 
@@ -132,7 +205,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     "@type": "WebPage",
     "speakable": {
       "@type": "SpeakableSpecification",
-      "cssSelector": [".font-heading", ".hero-subhead"]
+      "cssSelector": [".font-heading", ".hero-subhead", ".section-heading"]
     },
     "url": "https://growlocalcreative.com"
   };
@@ -157,8 +230,23 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body className="antialiased">
         <script
           type="application/ld+json"
+          id="organization-schema"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
           id="local-business-schema"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          id="faq-schema"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          id="services-schema"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(servicesJsonLd) }}
         />
         <script
           type="application/ld+json"

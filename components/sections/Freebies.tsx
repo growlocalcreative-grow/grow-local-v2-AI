@@ -7,15 +7,22 @@ import type { FreebiesContent } from "@/lib/content";
 
 export function Freebies({ data }: { data: FreebiesContent }) {
   return (
-    <section id="freebies" className="py-24 bg-cream/20">
+    <section 
+      id="freebies" 
+      className="py-24"
+      style={{ 
+        backgroundColor: data.backgroundColor || 'var(--cream-lighter)',
+        color: data.textColor || 'var(--foreground)'
+      }}
+    >
       <div className="container mx-auto px-4">
         <div className="text-center mb-16 space-y-4">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-secondary/10 text-secondary text-xs font-bold tracking-widest uppercase">
             <Gift className="h-3.5 w-3.5" />
             {data.eyebrow}
           </div>
-          <h2 className="font-heading text-4xl md:text-5xl font-medium text-stone-900 leading-tight">{data.heading}</h2>
-          <p className="text-stone-600 text-lg max-w-2xl mx-auto leading-relaxed">{data.subheading}</p>
+          <h2 className="font-heading text-4xl md:text-5xl font-medium leading-tight">{data.heading}</h2>
+          <p className="opacity-70 text-lg max-w-2xl mx-auto leading-relaxed">{data.subheading}</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
