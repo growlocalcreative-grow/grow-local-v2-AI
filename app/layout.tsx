@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import { SiteChrome } from "@/components/layout/SiteChrome";
 import { ScrollToTop } from "@/components/ScrollToTop";
@@ -8,65 +8,98 @@ import "./globals.css";
 // SEO-friendly caching: revalidate every hour instead of every request
 export const revalidate = 3600;
 
+export async function generateViewport(): Promise<Viewport> {
+  try {
+    const settings = await getSiteSettingsContent();
+    return {
+      themeColor: settings.primaryColor,
+    };
+  } catch (e) {
+    return {
+      themeColor: "#3D4337",
+    };
+  }
+}
+
 export async function generateMetadata(): Promise<Metadata> {
-  const settings = await getSiteSettingsContent();
-  return {
-    metadataBase: new URL("https://growlocalcreative.com"),
-    alternates: {
-      canonical: "https://growlocalcreative.com",
-    },
-    title: {
-      default: `${settings.agencyName} | Web Design for Georgetown Divide`,
-      template: `%s | ${settings.agencyName}`,
-    },
-    description:
-      "Simple, phone-friendly websites for small businesses, nonprofits, and makers across the Georgetown Divide, Northern Foothill Sierras, and El Dorado & Placer Counties. No jargon, no big-agency price tag.",
-    keywords: [
-      "Web Design Georgetown Divide",
-      "Small Business Website Cool CA",
-      "Nonprofit Web Design El Dorado County",
-      "Local SEO Cool CA",
-      "Foothill Sierra Web Development",
-      "Simple Websites for Makers",
-      "Grow Local Creative",
-      "Georgetown CA Website Builder"
-    ],
-    openGraph: {
-      title: `${settings.agencyName} | Simple Websites for Local Businesses`,
+  try {
+    const settings = await getSiteSettingsContent();
+    return {
+      metadataBase: new URL("https://growlocalcreative.com"),
+      alternates: {
+        canonical: "https://growlocalcreative.com",
+      },
+      title: {
+        default: `${settings.agencyName} | Web Design for Georgetown Divide`,
+        template: `%s | ${settings.agencyName}`,
+      },
       description:
-        "A neighbor, not a corporation. Simple, phone-friendly websites for small businesses, nonprofits, churches, and makers around Cool, CA.",
-      url: "https://growlocalcreative.com",
-      siteName: settings.agencyName,
-      locale: "en_US",
-      type: "website",
-    },
-    icons: {
-      icon: "/Grow Local Creative_Green.ico",
-    },
-    robots: {
-      index: true,
-      follow: true,
-      googleBot: {
+        "Simple, phone-friendly websites for small businesses, nonprofits, and makers across the Georgetown Divide, Northern Foothill Sierras, and El Dorado & Placer Counties. No jargon, no big-agency price tag.",
+      keywords: [
+        "Web Design Georgetown Divide",
+        "Small Business Website Cool CA",
+        "Nonprofit Web Design El Dorado County",
+        "Local SEO Cool CA",
+        "Foothill Sierra Web Development",
+        "Simple Websites for Makers",
+        "Grow Local Creative",
+        "Georgetown CA Website Builder"
+      ],
+      openGraph: {
+        title: `${settings.agencyName} | Simple Websites for Local Businesses`,
+        description:
+          "A neighbor, not a corporation. Simple, phone-friendly websites for small businesses, nonprofits, churches, and makers around Cool, CA.",
+        url: "https://growlocalcreative.com",
+        siteName: settings.agencyName,
+        locale: "en_US",
+        type: "website",
+      },
+      icons: {
+        icon: "/Grow Local Creative_Green.ico",
+      },
+      robots: {
         index: true,
         follow: true,
-        'max-video-preview': -1,
-        'max-image-preview': 'large',
-        'max-snippet': -1,
+        googleBot: {
+          index: true,
+          follow: true,
+          'max-video-preview': -1,
+          'max-image-preview': 'large',
+          'max-snippet': -1,
+        },
       },
-    },
-    verification: {
-      google: "7s9Nx1UeeBbX0Emq0X4v4U1Y6f-Z4-40L14",
-    },
-    themeColor: settings.primaryColor,
-  };
+      verification: {
+        google: "7s9Nx1UeeBbX0Emq0X4v4U1Y6f-Z4-40L14",
+      },
+    };
+  } catch (error) {
+    return {
+      title: "Grow Local Creative",
+      description: "Simple websites for local businesses."
+    };
+  }
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const [settings, faqData, servicesData] = await Promise.all([
-    getSiteSettingsContent(),
-    getFaqContent(),
-    getServicesContent()
-  ]);
+  let settings, faqData, servicesData;
+  
+  try {
+    [settings, faqData, servicesData] = await Promise.all([
+      getSiteSettingsContent(),
+      getFaqContent(),
+      getServicesContent()
+    ]);
+  } catch (error) {
+    console.error("Failed to load layout content", error);
+    // These will use defaults from lib/content if fetch fails internally
+    return (
+      <html lang="en">
+        <body className="antialiased">
+          {children}
+        </body>
+      </html>
+    );
+  }
 
   const organizationJsonLd = {
     "@context": "https://schema.org",

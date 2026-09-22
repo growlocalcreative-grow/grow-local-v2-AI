@@ -1,10 +1,15 @@
 import Link from "next/link";
 import { getSiteSettingsContent } from "@/lib/content";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 
 export default async function NotFound() {
-  const settings = await getSiteSettingsContent();
+  let settings;
+  try {
+    settings = await getSiteSettingsContent();
+  } catch (e) {
+    // Fallback if settings fail
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4">

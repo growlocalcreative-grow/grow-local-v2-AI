@@ -27,7 +27,7 @@ function parseFirestoreValue(value: any): any {
   if (value.integerValue !== undefined) return Number(value.integerValue);
   if (value.doubleValue !== undefined) return Number(value.doubleValue);
   if (value.booleanValue !== undefined) return value.booleanValue;
-  if (value.timestampValue !== undefined) return new Date(value.timestampValue);
+  if (value.timestampValue !== undefined) return value.timestampValue; // Keep as ISO string from Firestore REST
   if (value.nullValue !== undefined) return null;
   
   if (value.arrayValue !== undefined) {
