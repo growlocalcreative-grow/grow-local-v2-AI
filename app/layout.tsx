@@ -109,7 +109,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     "logo": "https://growlocalcreative.com/logo.png",
     "email": settings.email,
     "telephone": settings.phone,
-    "sameAs": settings.socialLinks.filter(l => l.isEnabled).map(l => l.url)
+    "sameAs": (settings.socialLinks || []).filter(l => l && l.isEnabled && l.url).map(l => l.url)
   };
 
   const websiteJsonLd = {

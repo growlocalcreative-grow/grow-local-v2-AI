@@ -306,7 +306,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
 
 
 
-async function fetchContentDoc<T>(docId: string, fallback: T): Promise<T> {
+async function fetchContentDoc<T extends object>(docId: string, fallback: T): Promise<T> {
   const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || aiStudioConfig.projectId;
   
   if (!projectId) {
@@ -318,7 +318,14 @@ async function fetchContentDoc<T>(docId: string, fallback: T): Promise<T> {
     const data = await getDocument("content", docId);
     if (data) {
       console.log(`[Content] Successfully fetched ${docId} from Firestore`);
-      return { ...fallback, ...data } as T;
+      // Robust merge: only overwrite if data[key] is not null/undefined
+      const result = { ...fallback };
+      for (const key in data) {
+        if (data[key] !== null && data[key] !== undefined) {
+          (result as any)[key] = data[key];
+        }
+      }
+      return result as T;
     }
     console.log(`[Content] No document found for ${docId}, using defaults`);
     return fallback;
@@ -346,7 +353,14 @@ export async function getSiteSettingsContent(): Promise<SiteSettings> {
     const data = await getDocument("site_settings", "global");
     if (data) {
       console.log(`[Content] Successfully fetched site_settings from Firestore`);
-      return { ...DEFAULT_SETTINGS, ...data } as SiteSettings;
+      // Robust merge for settings
+      const result = { ...DEFAULT_SETTINGS };
+      for (const key in data) {
+        if (data[key] !== null && data[key] !== undefined) {
+          (result as any)[key] = data[key];
+        }
+      }
+      return result as SiteSettings;
     }
     return DEFAULT_SETTINGS;
   } catch (error) {

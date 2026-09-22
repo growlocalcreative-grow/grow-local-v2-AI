@@ -80,9 +80,7 @@ export async function getDocument(collection: string, docId: string) {
   const url = getUrl(`${collection}/${docId}`);
   
   try {
-    const res = await fetch(url, {
-      cache: 'no-store'
-    });
+    const res = await fetch(url);
     
     if (!res.ok) {
       if (res.status === 404) return null;
@@ -111,9 +109,7 @@ export async function getCollection(collection: string) {
   const url = getUrl(`${collection}`);
 
   try {
-    const res = await fetch(url, {
-      cache: 'no-store'
-    });
+    const res = await fetch(url);
     
     if (!res.ok) {
       const errorText = await res.text();
