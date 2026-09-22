@@ -46,7 +46,7 @@ export function Header({ settings }: { settings: SiteSettings }) {
             <div className="relative h-12 w-12 overflow-hidden rounded-full border-2 border-primary/10 transition-transform group-hover:scale-105">
               <img
                 src="/logo.png"
-                alt="Grow Local Creative Logo"
+                alt={`${settings.agencyName} - Georgetown Divide Web Design & SEO`}
                 className="h-full w-full object-cover"
                 onError={(e) => {
                   e.currentTarget.src = "https://picsum.photos/seed/growlocal/100/100";

@@ -23,7 +23,7 @@ export function Footer({ settings }: { settings: SiteSettings }) {
               <div className="h-14 w-14 overflow-hidden rounded-full border-2 border-secondary/20 bg-white p-1">
                 <img 
                   src="/logo.png" 
-                  alt="Grow Local Creative Logo" 
+                  alt={`${settings.agencyName} - Georgetown Divide Web Design & SEO`} 
                   className="h-full w-full object-contain"
                   onError={(e) => {
                     e.currentTarget.src = "https://picsum.photos/seed/growlocal/100/100";

@@ -12,6 +12,9 @@ export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettingsContent();
   return {
     metadataBase: new URL("https://growlocalcreative.com"),
+    alternates: {
+      canonical: "https://growlocalcreative.com",
+    },
     title: {
       default: `${settings.agencyName} | Web Design for Georgetown Divide`,
       template: `%s | ${settings.agencyName}`,
@@ -40,9 +43,21 @@ export async function generateMetadata(): Promise<Metadata> {
     icons: {
       icon: "/Grow Local Creative_Green.ico",
     },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-video-preview': -1,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+      },
+    },
     verification: {
       google: "7s9Nx1UeeBbX0Emq0X4v4U1Y6f-Z4-40L14",
     },
+    themeColor: settings.primaryColor,
   };
 }
 
@@ -62,6 +77,17 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     "email": settings.email,
     "telephone": settings.phone,
     "sameAs": settings.socialLinks.filter(l => l.isEnabled).map(l => l.url)
+  };
+
+  const websiteJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": settings.agencyName,
+    "url": "https://growlocalcreative.com",
+    "description": "Simple, phone-friendly websites for small businesses and nonprofits across the Georgetown Divide.",
+    "publisher": {
+      "@id": "https://growlocalcreative.com/#organization"
+    }
   };
 
   const localBusinessJsonLd = {
@@ -232,6 +258,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           type="application/ld+json"
           id="organization-schema"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          id="website-schema"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
         />
         <script
           type="application/ld+json"
