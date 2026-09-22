@@ -5,8 +5,8 @@ import { ScrollToTop } from "@/components/ScrollToTop";
 import { getSiteSettingsContent, getFaqContent, getServicesContent } from "@/lib/content";
 import "./globals.css";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+// SEO-friendly caching: revalidate every hour instead of every request
+export const revalidate = 3600;
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettingsContent();

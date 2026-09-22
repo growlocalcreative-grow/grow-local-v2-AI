@@ -14,8 +14,8 @@ import {
   getSiteSettingsContent,
 } from "@/lib/content";
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+// Page content revalidation (1 hour)
+export const revalidate = 3600;
 
 // Page content
 export default async function HomePage() {
