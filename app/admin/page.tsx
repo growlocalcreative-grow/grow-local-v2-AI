@@ -1,9 +1,20 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getAuthInstance, getDb, getSiteSettings, updateFirestoreDoc, firebaseConfig } from "@/lib/firebase";
-import { doc, getDoc, collection, getDocs, query, orderBy, deleteDoc } from "firebase/firestore";
-import { signInWithPopup, GoogleAuthProvider, onAuthStateChanged, type User } from "firebase/auth";
+import { 
+  getAuthInstance, 
+  onAuthStateChanged, 
+  signInWithPopup, 
+  GoogleAuthProvider, 
+  signOut,
+  type User 
+} from "@/lib/firebase-auth";
+import { 
+  saveContentAction, 
+  getSubscribersAction, 
+  deleteSubscriberAction, 
+  getDocumentAction 
+} from "./actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -12,6 +23,14 @@ import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/com
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Lock, Save, LogOut, CheckCircle2, AlertCircle, Plus, Trash2, ArrowUp, ArrowDown, GripVertical, Eye, EyeOff, Pencil, RefreshCw, Mail } from "lucide-react";
 import { ICON_OPTIONS } from "@/lib/icon-map";
+import aiStudioConfig from "@/firebase-applet-config.json";
+
+const firebaseConfig = {
+  apiKey: aiStudioConfig.apiKey,
+  authDomain: aiStudioConfig.authDomain || `${aiStudioConfig.projectId}.firebaseapp.com`,
+  projectId: aiStudioConfig.projectId,
+};
+
 import {
   DEFAULT_HERO,
   DEFAULT_ABOUT,
@@ -42,8 +61,8 @@ function StatusLine({ status }: { status: Status }) {
 
 async function loadContentDoc<T>(docId: string, fallback: T): Promise<T> {
   try {
-    const snap = await getDoc(doc(getDb(), "content", docId));
-    if (snap.exists()) return { ...fallback, ...(snap.data() as Partial<T>) };
+    const res = await getDocumentAction("content", docId);
+    if (res.success && res.data) return { ...fallback, ...res.data };
   } catch (error) {
     console.error(error);
   }
@@ -71,13 +90,14 @@ export default function AdminPage() {
   useEffect(() => {
     try {
       const auth = getAuthInstance();
-      const unsubscribe = onAuthStateChanged(auth, (u) => {
+      const unsubscribe = onAuthStateChanged(auth, async (u) => {
         setUser(u);
         setLoading(false);
         if (u) {
           const isAdmin = u.email === 'growlocalcreative@gmail.com' || u.uid === 'bQkiEyF4dSVHrK9xvFtKNXuTE2p2';
           if (isAdmin) {
-            loadAll();
+            const token = await u.getIdToken();
+            loadAll(token);
           } else {
             setError("You are signed in, but you do not have admin permissions for this site.");
           }
@@ -90,31 +110,26 @@ export default function AdminPage() {
     }
   }, []);
 
-  async function loadAll() {
-    const [siteSettings, heroData, aboutData, servicesData, freebiesData, futureData, faqData] = await Promise.all([
-      getSiteSettings(),
+  async function loadAll(token: string) {
+    const [heroData, aboutData, servicesData, freebiesData, futureData, faqData, subscribersRes, settingsRes] = await Promise.all([
       loadContentDoc("hero", DEFAULT_HERO),
       loadContentDoc("about", DEFAULT_ABOUT),
       loadContentDoc("services", DEFAULT_SERVICES),
       loadContentDoc("freebies", DEFAULT_FREEBIES),
       loadContentDoc("future", DEFAULT_FUTURE),
       loadContentDoc("faq", DEFAULT_FAQ),
+      getSubscribersAction(token),
+      getDocumentAction("site_settings", "global")
     ]);
-    
-    // Fetch subscribers
-    try {
-      const subscribersCol = collection(getDb(), 'subscribers');
-      const q = query(subscribersCol, orderBy('createdAt', 'desc'));
-      const snap = await getDocs(q);
-      setSubscribers(snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as any)));
-    } catch (e) {
-      console.error("Failed to fetch subscribers:", e);
+
+    if (subscribersRes.success) {
+      setSubscribers(subscribersRes.data || []);
     }
     
     // Merge database settings with code-level defaults to ensure all fields exist
     setSettings({
       ...DEFAULT_SETTINGS,
-      ...(siteSettings || {})
+      ...(settingsRes.success ? settingsRes.data : {})
     });
 
     setHero(heroData);
@@ -151,13 +166,24 @@ export default function AdminPage() {
   }
 
   async function saveSection(key: string, docId: string, data: any) {
+    if (!user) return;
     setSaving(key);
     setStatus((s) => ({ ...s, [key]: null }));
     try {
-      await updateFirestoreDoc(docId === "global" ? "site_settings" : "content", docId, data);
-      setStatus((s) => ({ ...s, [key]: { type: "success", message: "Saved! Live site updates within a minute." } }));
-    } catch (error) {
-      setStatus((s) => ({ ...s, [key]: { type: "error", message: "Failed to save. Are you signed in as the admin?" } }));
+      const token = await user.getIdToken();
+      const res = await saveContentAction(
+        docId === "global" ? "site_settings" : "content", 
+        docId, 
+        data, 
+        token
+      );
+      if (res.success) {
+        setStatus((s) => ({ ...s, [key]: { type: "success", message: "Saved! Live site updates within a minute." } }));
+      } else {
+        throw new Error(res.error);
+      }
+    } catch (error: any) {
+      setStatus((s) => ({ ...s, [key]: { type: "error", message: `Failed to save: ${error.message}` } }));
       console.error(error);
     } finally {
       setSaving(null);
@@ -939,7 +965,12 @@ export default function AdminPage() {
                     <CardTitle>Subscribers</CardTitle>
                     <CardDescription>{subscribers.length} total signups</CardDescription>
                   </div>
-                  <Button variant="ghost" size="icon" onClick={() => loadAll()}>
+                  <Button variant="ghost" size="icon" onClick={async () => {
+                    if (user) {
+                      const token = await user.getIdToken();
+                      loadAll(token);
+                    }
+                  }}>
                     <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
                   </Button>
                 </div>
@@ -967,8 +998,11 @@ export default function AdminPage() {
                           onClick={async () => {
                             if (confirm(`Delete ${sub.email}?`)) {
                               try {
-                                await deleteDoc(doc(getDb(), 'subscribers', sub.id));
-                                setSubscribers(prev => prev.filter(s => s.id !== sub.id));
+                                const token = await user.getIdToken();
+                                const res = await deleteSubscriberAction(sub.id, token);
+                                if (res.success) {
+                                  setSubscribers(prev => prev.filter(s => s.id !== sub.id));
+                                }
                               } catch (e) {
                                 console.error(e);
                               }

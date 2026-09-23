@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { X, Mail, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { subscribeToNewsletter } from "@/lib/firebase";
+import { subscribeAction } from "@/app/admin/actions";
 import type { SiteSettings } from "@/lib/content";
 
 export function NewsletterModal({ settings }: { settings: SiteSettings }) {
@@ -59,13 +59,17 @@ export function NewsletterModal({ settings }: { settings: SiteSettings }) {
 
     setStatus("loading");
     try {
-      await subscribeToNewsletter(email);
-      setStatus("success");
-      localStorage.setItem("newsletter_subscribed", "true");
-      // Close after 3 seconds on success
-      setTimeout(() => {
-        setIsVisible(false);
-      }, 3000);
+      const result = await subscribeAction(email);
+      if (result.success) {
+        setStatus("success");
+        localStorage.setItem("newsletter_subscribed", "true");
+        // Close after 3 seconds on success
+        setTimeout(() => {
+          setIsVisible(false);
+        }, 3000);
+      } else {
+        throw new Error(result.error);
+      }
     } catch (error) {
       console.error(error);
       setStatus("error");
