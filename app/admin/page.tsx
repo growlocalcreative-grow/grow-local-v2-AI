@@ -145,12 +145,11 @@ export default function AdminPage() {
     setError(null);
     try {
       const auth = getAuthInstance();
-      const { browserPopupRedirectResolver } = await import("firebase/auth");
       
       console.log("[Auth] Attempting login for project:", auth.app.options.projectId);
       console.log("[Auth] Current origin:", window.location.origin);
       
-      await signInWithPopup(auth, provider, browserPopupRedirectResolver);
+      await signInWithPopup(auth, provider);
     } catch (error: any) {
       console.error("Login failed:", error);
       

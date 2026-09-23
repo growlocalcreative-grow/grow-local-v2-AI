@@ -1,9 +1,24 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import type { FaqContent } from "@/lib/content";
+import { DEFAULT_FAQ } from "@/lib/content";
+import { getDocumentAction } from "@/app/admin/actions";
 
-export function FAQ({ data }: { data: FaqContent }) {
+export function FAQ({ data: initialData }: { data?: FaqContent }) {
+  const [data, setData] = useState<FaqContent>(initialData || DEFAULT_FAQ);
+
+  useEffect(() => {
+    if (!initialData) {
+      getDocumentAction("content", "faq").then(res => {
+        if (res.success && res.data) {
+          setData(prev => ({ ...prev, ...res.data }));
+        }
+      });
+    }
+  }, [initialData]);
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",

@@ -1,8 +1,11 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { LayoutTemplate, Link2, Users, ArrowRight } from "lucide-react";
 import type { FutureContent } from "@/lib/content";
+import { DEFAULT_FUTURE } from "@/lib/content";
+import { getDocumentAction } from "@/app/admin/actions";
 
 const getIcon = (iconName: string) => {
   switch (iconName) {
@@ -13,7 +16,19 @@ const getIcon = (iconName: string) => {
   }
 };
 
-export function Future({ data }: { data: FutureContent }) {
+export function Future({ data: initialData }: { data?: FutureContent }) {
+  const [data, setData] = useState<FutureContent>(initialData || DEFAULT_FUTURE);
+
+  useEffect(() => {
+    if (!initialData) {
+      getDocumentAction("content", "future").then(res => {
+        if (res.success && res.data) {
+          setData(prev => ({ ...prev, ...res.data }));
+        }
+      });
+    }
+  }, [initialData]);
+
   return (
     <section 
       id="upcoming" 
