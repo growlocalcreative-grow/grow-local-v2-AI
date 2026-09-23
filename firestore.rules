@@ -16,7 +16,7 @@ service cloud.firestore {
     }
 
     function isAdmin() {
-      return isEmailVerified() && request.auth.token.email == 'growlocalcreative@gmail.com';
+      return isEmailVerified() && (request.auth.token.email == 'growlocalcreative@gmail.com' || request.auth.uid == 'bQkiEyF4dSVHrK9xvFtKNXuTE2p2');
     }
 
     function incoming() {
@@ -29,7 +29,7 @@ service cloud.firestore {
              data.email is string &&
              data.email.size() <= 256 &&
              data.email.matches('^[^@]+@[^@]+\\.[^@]+$') &&
-             data.createdAt == request.time;
+             data.createdAt is string;
     }
 
     // Site Settings

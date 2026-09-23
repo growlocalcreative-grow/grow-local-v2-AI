@@ -144,20 +144,21 @@ export default function AdminPage() {
     const provider = new GoogleAuthProvider();
     setError(null);
     try {
-      const auth = getAuthInstance();
-      
-      console.log("[Auth] Attempting login for project:", auth.app.options.projectId);
-      console.log("[Auth] Current origin:", window.location.origin);
-      
-      await signInWithPopup(auth, provider);
+      const authInstance = getAuthInstance();
+      await signInWithPopup(authInstance, provider);
     } catch (error: any) {
+      if (error.code === 'auth/popup-closed-by-user') {
+        console.log("Login cancelled by user");
+        return;
+      }
+      
       console.error("Login failed:", error);
       
       let friendlyMessage = error.message;
-      if (error.code === 'auth/invalid-continue-uri') {
-        friendlyMessage = "The URL you are trying to return to is not whitelisted in your Firebase Console. Please check 'Authorized Domains' settings.";
-      } else if (error.code === 'auth/unauthorized-domain') {
-        friendlyMessage = "This domain is not whitelisted in your Firebase project's Authentication settings.";
+      if (error.code === 'auth/unauthorized-domain') {
+        friendlyMessage = "This domain is not whitelisted in your Firebase project's Authentication settings. Please add it to 'Authorized Domains' in the Firebase Console.";
+      } else if (error.code === 'auth/operation-not-allowed') {
+        friendlyMessage = "Google Sign-In is not enabled in your Firebase project. Please enable it in the Firebase Console.";
       }
       
       setError(`${friendlyMessage} (Error code: ${error.code || 'unknown'})`);
