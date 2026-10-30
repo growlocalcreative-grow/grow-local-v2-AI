@@ -282,14 +282,14 @@ export function ChecklistInteractiveView() {
 
           <div className="flex flex-col sm:flex-row md:flex-col gap-2 shrink-0">
             <a
-              href="tel:5303346276"
+              href="tel:9168694142"
               className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#2D3328] text-white text-xs font-semibold shadow hover:bg-stone-800 transition-colors"
             >
               <Phone className="w-3.5 h-3.5 text-secondary" />
-              <span>Call / Text (530) 334-6276</span>
+              <span>Call / Text (916) 869-4142</span>
             </a>
             <a
-              href="mailto:hello@growlocalcreative.com"
+              href="mailto:growlocalcreative@gmail.com"
               className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white text-stone-900 border border-stone-300 text-xs font-medium hover:bg-stone-50 transition-colors"
             >
               <Mail className="w-3.5 h-3.5 text-stone-600" />

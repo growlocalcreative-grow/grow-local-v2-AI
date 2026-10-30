@@ -1,24 +1,19 @@
 import { NextResponse } from 'next/server';
-import fs from 'node:fs';
-import path from 'node:path';
+import { getChecklistPdfBuffer } from '@/lib/checklist-pdf';
+
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    const filePath = path.join(process.cwd(), 'public', 'downloads', 'foothills-google-maps-checklist.pdf');
-    
-    if (!fs.existsSync(filePath)) {
-      return NextResponse.json({ error: 'Checklist file not found.' }, { status: 404 });
-    }
+    const pdfBuffer = getChecklistPdfBuffer();
 
-    const fileBuffer = fs.readFileSync(filePath);
-
-    return new NextResponse(fileBuffer, {
+    return new NextResponse(pdfBuffer as unknown as BodyInit, {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',
         'Content-Disposition': 'attachment; filename="Foothills-Google-Maps-Setup-Checklist.pdf"',
-        'Content-Length': fileBuffer.length.toString(),
-        'Cache-Control': 'public, max-age=3600',
+        'Content-Length': pdfBuffer.byteLength.toString(),
+        'Cache-Control': 'public, max-age=86400, s-maxage=86400',
       },
     });
   } catch (err) {

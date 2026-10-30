@@ -70,7 +70,7 @@ export function FooterNewsletter({ newsletter }: FooterNewsletterProps) {
         <div className="lg:col-span-7 space-y-3">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-secondary/20 text-[#E7EBD8] border border-secondary/30">
             <FileText className="w-3.5 h-3.5 text-secondary" />
-            <span>Free Local Business Lead Magnet</span>
+            <span>Free 5-Minute Action Guide</span>
           </div>
 
           <h3 className="font-heading text-2xl sm:text-3xl font-bold text-primary-foreground tracking-tight leading-tight">
@@ -144,9 +144,9 @@ export function FooterNewsletter({ newsletter }: FooterNewsletterProps) {
                 <p className="text-xs text-rose-300 pl-1 font-medium">{errorMessage}</p>
               )}
 
-              <p className="text-xs text-primary-foreground/60 pl-1 flex items-center gap-1.5">
+              <p className="text-xs text-primary-foreground/75 pl-1 flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5 text-secondary shrink-0" />
-                <span>Instant 1-page PDF · No spam · Practical Foothills advice only</span>
+                <span>Includes instant download of the 5-Minute Google Maps Setup Checklist (PDF) · No spam · Practical Foothills advice only</span>
               </p>
             </form>
           )}

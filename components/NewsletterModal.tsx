@@ -148,7 +148,7 @@ export function NewsletterModal({ settings }: { settings: SiteSettings }) {
 
                 <div className="pt-6 border-t border-white/10 text-[11px] text-stone-400 flex items-center gap-2 relative z-10">
                   <Download className="w-3.5 h-3.5 text-secondary shrink-0" />
-                  <span>Instant 1-page PDF download immediately ready</span>
+                  <span>Instant 1-page Google Maps Setup Checklist (PDF)</span>
                 </div>
               </div>
 

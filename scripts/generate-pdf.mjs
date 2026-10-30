@@ -333,8 +333,8 @@ async function generateChecklistPDF() {
     color: cDarkForest,
   });
 
-  page.drawText('CALL OR TEXT: (530) 334-6276   |   EMAIL: hello@growlocalcreative.com   |   WEB: www.growlocalcreative.com', {
-    x: marginX + 28,
+  page.drawText('CALL OR TEXT: (916) 869-4142   |   EMAIL: growlocalcreative@gmail.com   |   WEB: www.growlocalcreative.com', {
+    x: marginX + 22,
     y: footerBoxY + 15,
     size: 7.5,
     font: fontBold,
