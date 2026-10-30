@@ -21,7 +21,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Lock, Save, LogOut, CheckCircle2, AlertCircle, Plus, Trash2, ArrowUp, ArrowDown, GripVertical, Eye, EyeOff, Pencil, RefreshCw, Mail } from "lucide-react";
+import { Lock, Save, LogOut, CheckCircle2, AlertCircle, Plus, Trash2, ArrowUp, ArrowDown, GripVertical, Eye, EyeOff, Pencil, RefreshCw, Mail, Sparkles, ExternalLink, FileText, Download } from "lucide-react";
 import { ICON_OPTIONS } from "@/lib/icon-map";
 import aiStudioConfig from "@/firebase-applet-config.json";
 
@@ -38,6 +38,7 @@ import {
   DEFAULT_FREEBIES,
   DEFAULT_FUTURE,
   DEFAULT_FAQ,
+  DEFAULT_PARTNERS,
   DEFAULT_SETTINGS,
   type HeroContent,
   type AboutContent,
@@ -45,6 +46,7 @@ import {
   type FreebiesContent,
   type FutureContent,
   type FaqContent,
+  type PartnersPageContent,
 } from "@/lib/content";
 
 type Status = { type: "success" | "error"; message: string } | null;
@@ -81,6 +83,7 @@ export default function AdminPage() {
   const [freebies, setFreebies] = useState<FreebiesContent>(DEFAULT_FREEBIES);
   const [future, setFuture] = useState<FutureContent>(DEFAULT_FUTURE);
   const [faq, setFaq] = useState<FaqContent>(DEFAULT_FAQ);
+  const [partners, setPartners] = useState<PartnersPageContent>(DEFAULT_PARTNERS);
   const [subscribers, setSubscribers] = useState<{ id: string; email: string; createdAt: any }[]>([]);
 
   const [saving, setSaving] = useState<string | null>(null);
@@ -111,13 +114,14 @@ export default function AdminPage() {
   }, []);
 
   async function loadAll(token: string) {
-    const [heroData, aboutData, servicesData, freebiesData, futureData, faqData, subscribersRes, settingsRes] = await Promise.all([
+    const [heroData, aboutData, servicesData, freebiesData, futureData, faqData, partnersData, subscribersRes, settingsRes] = await Promise.all([
       loadContentDoc("hero", DEFAULT_HERO),
       loadContentDoc("about", DEFAULT_ABOUT),
       loadContentDoc("services", DEFAULT_SERVICES),
       loadContentDoc("freebies", DEFAULT_FREEBIES),
       loadContentDoc("future", DEFAULT_FUTURE),
       loadContentDoc("faq", DEFAULT_FAQ),
+      loadContentDoc("partners", DEFAULT_PARTNERS),
       getSubscribersAction(token),
       getDocumentAction("site_settings", "global")
     ]);
@@ -127,10 +131,21 @@ export default function AdminPage() {
     }
     
     // Merge database settings with code-level defaults to ensure all fields exist
-    setSettings({
+    const mergedSettings = {
       ...DEFAULT_SETTINGS,
       ...(settingsRes.success ? settingsRes.data : {})
-    });
+    };
+    if (
+      !mergedSettings.newsletter?.title ||
+      mergedSettings.newsletter.title === "Practical digital tips for Foothill business owners." ||
+      mergedSettings.newsletter.title === "Join the Digest"
+    ) {
+      mergedSettings.newsletter = {
+        ...DEFAULT_SETTINGS.newsletter,
+        isEnabled: mergedSettings.newsletter?.isEnabled ?? DEFAULT_SETTINGS.newsletter.isEnabled
+      };
+    }
+    setSettings(mergedSettings);
 
     setHero(heroData);
     setAbout(aboutData);
@@ -138,6 +153,7 @@ export default function AdminPage() {
     setFreebies(freebiesData);
     setFuture(futureData);
     setFaq(faqData);
+    setPartners(partnersData);
   }
 
   async function handleLogin() {
@@ -243,6 +259,27 @@ export default function AdminPage() {
     );
   }
 
+  function loadRecommendedAll() {
+    setHero(DEFAULT_HERO);
+    setAbout(DEFAULT_ABOUT);
+    setServices(DEFAULT_SERVICES);
+    setFreebies(DEFAULT_FREEBIES);
+    setFuture(DEFAULT_FUTURE);
+    setFaq(DEFAULT_FAQ);
+    setPartners(DEFAULT_PARTNERS);
+    if (settings) {
+      setSettings((prev: any) => ({
+        ...prev,
+        footerDescription: DEFAULT_SETTINGS.footerDescription,
+        newsletter: {
+          ...prev.newsletter,
+          title: DEFAULT_SETTINGS.newsletter.title,
+          description: DEFAULT_SETTINGS.newsletter.description,
+        }
+      }));
+    }
+  }
+
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-8">
       <div className="flex items-center justify-between">
@@ -250,7 +287,7 @@ export default function AdminPage() {
           <h1 className="text-3xl font-bold tracking-tight">Admin Dashboard</h1>
           <p className="text-muted-foreground">Manage your site settings and page content.</p>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <span className="text-sm text-muted-foreground hidden sm:inline">{user.email}</span>
           <Button variant="outline" size="sm" onClick={() => getAuthInstance().signOut()}>
             <LogOut className="w-4 h-4 mr-2" />
@@ -259,11 +296,34 @@ export default function AdminPage() {
         </div>
       </div>
 
+      <div className="bg-emerald-50 border border-emerald-200/90 rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm">
+        <div className="flex items-start gap-3">
+          <div className="p-2 bg-emerald-100 rounded-xl text-emerald-800 shrink-0 mt-0.5">
+            <Sparkles className="w-5 h-5" />
+          </div>
+          <div>
+            <h3 className="text-sm font-bold text-emerald-950">High-Converting Foothill Copy Available</h3>
+            <p className="text-xs text-emerald-800 leading-relaxed max-w-xl">
+              Fresh copy tailored for local contractors, eateries & food trucks (menus/catering), and specialty shops. Click to preview this copy across your admin forms, adjust whatever you like, and save to your live site!
+            </p>
+          </div>
+        </div>
+        <Button 
+          size="sm" 
+          onClick={loadRecommendedAll}
+          className="shrink-0 bg-emerald-700 hover:bg-emerald-800 text-white font-medium shadow-sm"
+        >
+          <RefreshCw className="w-3.5 h-3.5 mr-2" />
+          Apply New Copy to Form
+        </Button>
+      </div>
+
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="flex flex-wrap h-auto">
           <TabsTrigger value="hero">Hero</TabsTrigger>
           <TabsTrigger value="about">About</TabsTrigger>
           <TabsTrigger value="services">Services</TabsTrigger>
+          <TabsTrigger value="partners">Partners & Work</TabsTrigger>
           <TabsTrigger value="future">Future Tools</TabsTrigger>
           <TabsTrigger value="freebies">Freebies</TabsTrigger>
           <TabsTrigger value="faq">FAQ</TabsTrigger>
@@ -322,10 +382,14 @@ export default function AdminPage() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-4 pt-2">
+              <div className="flex flex-wrap items-center gap-3 pt-2">
                 <Button onClick={() => saveSection("hero", "hero", hero)} disabled={saving === "hero"}>
                   <Save className="w-4 h-4 mr-2" />
                   {saving === "hero" ? "Saving..." : "Save Hero"}
+                </Button>
+                <Button variant="outline" type="button" onClick={() => setHero(DEFAULT_HERO)}>
+                  <RefreshCw className="w-4 h-4 mr-2" />
+                  Load Recommended Copy
                 </Button>
                 <StatusLine status={status.hero ?? null} />
               </div>
@@ -396,10 +460,14 @@ export default function AdminPage() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-4 pt-2">
+              <div className="flex flex-wrap items-center gap-3 pt-2">
                 <Button onClick={() => saveSection("about", "about", about)} disabled={saving === "about"}>
                   <Save className="w-4 h-4 mr-2" />
                   {saving === "about" ? "Saving..." : "Save About"}
+                </Button>
+                <Button variant="outline" type="button" onClick={() => setAbout(DEFAULT_ABOUT)}>
+                  <RefreshCw className="w-4 h-4 mr-2" />
+                  Load Recommended Copy
                 </Button>
                 <StatusLine status={status.about ?? null} />
               </div>
@@ -518,12 +586,208 @@ export default function AdminPage() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-4 pt-2">
+              <div className="flex flex-wrap items-center gap-3 pt-2">
                 <Button onClick={() => saveSection("services", "services", services)} disabled={saving === "services"}>
                   <Save className="w-4 h-4 mr-2" />
                   {saving === "services" ? "Saving..." : "Save Services"}
                 </Button>
+                <Button variant="outline" type="button" onClick={() => setServices(DEFAULT_SERVICES)}>
+                  <RefreshCw className="w-4 h-4 mr-2" />
+                  Load Recommended Copy
+                </Button>
                 <StatusLine status={status.services ?? null} />
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* PARTNERS & WORK */}
+        <TabsContent value="partners">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle>Partners &amp; Work Showcase Page (/partners)</CardTitle>
+                <CardDescription>
+                  Showcase real Foothill websites built and in progress to win paying clients.
+                </CardDescription>
+              </div>
+              <a
+                href="/partners"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs font-medium text-primary hover:underline flex items-center gap-1 bg-secondary/20 px-3 py-1.5 rounded-lg"
+              >
+                <span>Preview Page</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Headline</Label>
+                  <Input
+                    value={partners.headline}
+                    onChange={(e) => setPartners({ ...partners, headline: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Headline Emphasis (italic part)</Label>
+                  <Input
+                    value={partners.headlineEmphasis}
+                    onChange={(e) => setPartners({ ...partners, headlineEmphasis: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Eyebrow</Label>
+                <Input
+                  value={partners.eyebrow}
+                  onChange={(e) => setPartners({ ...partners, eyebrow: e.target.value })}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Page Subhead</Label>
+                <Textarea
+                  rows={3}
+                  value={partners.subhead}
+                  onChange={(e) => setPartners({ ...partners, subhead: e.target.value })}
+                />
+              </div>
+
+              {/* Projects List preview */}
+              <div className="border-t pt-6 space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
+                    Featured Partner Websites ({partners.projects?.length || 0})
+                  </h3>
+                  <span className="text-xs text-muted-foreground font-mono">
+                    3 Live Websites · 2 In The Workshop
+                  </span>
+                </div>
+
+                <div className="space-y-4">
+                  {partners.projects?.map((project, pIdx) => (
+                    <div key={project.id || pIdx} className="border rounded-2xl p-4 bg-muted/20 space-y-3">
+                      <div className="flex flex-wrap items-center justify-between gap-2 border-b pb-2">
+                        <div className="flex items-center gap-2">
+                          <span className="font-heading font-semibold text-base">{project.name}</span>
+                          <span className={`text-[11px] px-2 py-0.5 rounded-full font-medium ${
+                            project.status === "live" ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800"
+                          }`}>
+                            {project.statusLabel}
+                          </span>
+                        </div>
+                        <a
+                          href={project.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs text-primary hover:underline flex items-center gap-1 font-mono"
+                        >
+                          <span>{project.displayUrl}</span>
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div className="space-y-1">
+                          <Label className="text-xs">Category</Label>
+                          <Input
+                            value={project.category}
+                            onChange={(e) => {
+                              const updated = [...partners.projects];
+                              updated[pIdx] = { ...updated[pIdx], category: e.target.value };
+                              setPartners({ ...partners, projects: updated });
+                            }}
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <Label className="text-xs">Catchy Tagline / Hook</Label>
+                          <Input
+                            value={project.tagline}
+                            onChange={(e) => {
+                              const updated = [...partners.projects];
+                              updated[pIdx] = { ...updated[pIdx], tagline: e.target.value };
+                              setPartners({ ...partners, projects: updated });
+                            }}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-1">
+                        <Label className="text-xs">Description &amp; Why It Converts</Label>
+                        <Textarea
+                          rows={2}
+                          value={project.description}
+                          onChange={(e) => {
+                            const updated = [...partners.projects];
+                            updated[pIdx] = { ...updated[pIdx], description: e.target.value };
+                            setPartners({ ...partners, projects: updated });
+                          }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Banner & CTA copy */}
+              <div className="border-t pt-6 space-y-4">
+                <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
+                  Bottom Call to Action &amp; Community Story
+                </h3>
+                <div className="space-y-3">
+                  <div className="space-y-1">
+                    <Label className="text-xs">Community Story Title</Label>
+                    <Input
+                      value={partners.bannerTitle}
+                      onChange={(e) => setPartners({ ...partners, bannerTitle: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs">Community Story Description</Label>
+                    <Textarea
+                      rows={2}
+                      value={partners.bannerDescription}
+                      onChange={(e) => setPartners({ ...partners, bannerDescription: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-1 pt-2">
+                    <Label className="text-xs">Final CTA Headline</Label>
+                    <Input
+                      value={partners.ctaTitle}
+                      onChange={(e) => setPartners({ ...partners, ctaTitle: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs">Final CTA Description</Label>
+                    <Textarea
+                      rows={2}
+                      value={partners.ctaDescription}
+                      onChange={(e) => setPartners({ ...partners, ctaDescription: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs">CTA Button Text</Label>
+                    <Input
+                      value={partners.ctaButtonText}
+                      onChange={(e) => setPartners({ ...partners, ctaButtonText: e.target.value })}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-3 pt-4 border-t">
+                <Button onClick={() => saveSection("partners", "partners", partners)} disabled={saving === "partners"}>
+                  <Save className="w-4 h-4 mr-2" />
+                  {saving === "partners" ? "Saving..." : "Save Partners Page"}
+                </Button>
+                <Button variant="outline" type="button" onClick={() => setPartners(DEFAULT_PARTNERS)}>
+                  <RefreshCw className="w-4 h-4 mr-2" />
+                  Load Recommended Copy
+                </Button>
+                <StatusLine status={status.partners ?? null} />
               </div>
             </CardContent>
           </Card>
@@ -640,10 +904,14 @@ export default function AdminPage() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-4 pt-2">
+              <div className="flex flex-wrap items-center gap-3 pt-2">
                 <Button onClick={() => saveSection("future", "future", future)} disabled={saving === "future"}>
                   <Save className="w-4 h-4 mr-2" />
                   {saving === "future" ? "Saving..." : "Save Future Tools"}
+                </Button>
+                <Button variant="outline" type="button" onClick={() => setFuture(DEFAULT_FUTURE)}>
+                  <RefreshCw className="w-4 h-4 mr-2" />
+                  Load Recommended Copy
                 </Button>
                 <StatusLine status={status.future ?? null} />
               </div>
@@ -775,10 +1043,14 @@ export default function AdminPage() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-4 pt-2">
+              <div className="flex flex-wrap items-center gap-3 pt-2">
                 <Button onClick={() => saveSection("freebies", "freebies", freebies)} disabled={saving === "freebies"}>
                   <Save className="w-4 h-4 mr-2" />
                   {saving === "freebies" ? "Saving..." : "Save Freebies"}
+                </Button>
+                <Button variant="outline" type="button" onClick={() => setFreebies(DEFAULT_FREEBIES)}>
+                  <RefreshCw className="w-4 h-4 mr-2" />
+                  Load Recommended Copy
                 </Button>
                 <StatusLine status={status.freebies ?? null} />
               </div>
@@ -868,10 +1140,14 @@ export default function AdminPage() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-4 pt-2">
+              <div className="flex flex-wrap items-center gap-3 pt-2">
                 <Button onClick={() => saveSection("faq", "faq", faq)} disabled={saving === "faq"}>
                   <Save className="w-4 h-4 mr-2" />
                   {saving === "faq" ? "Saving..." : "Save FAQ"}
+                </Button>
+                <Button variant="outline" type="button" onClick={() => setFaq(DEFAULT_FAQ)}>
+                  <RefreshCw className="w-4 h-4 mr-2" />
+                  Load Recommended Copy
                 </Button>
                 <StatusLine status={status.faq ?? null} />
               </div>
@@ -947,10 +1223,60 @@ export default function AdminPage() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-4 pt-4">
+                <div className="rounded-xl border border-secondary/30 bg-secondary/10 p-4 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <FileText className="w-4 h-4 text-secondary" />
+                      <span className="text-sm font-semibold text-stone-900">Lead Magnet Asset: 1-Page PDF Active</span>
+                    </div>
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-green-700 bg-green-100 px-2 py-0.5 rounded-full">
+                      Ready
+                    </span>
+                  </div>
+                  <p className="text-xs text-stone-600 leading-relaxed">
+                    When visitors submit their email in the modal or footer, the browser automatically initiates the direct PDF download and provides links to re-download or view the interactive cheatsheet.
+                  </p>
+                  <div className="flex flex-wrap gap-2 pt-1">
+                    <a
+                      href="/api/checklist/download"
+                      download="Foothills-Google-Maps-Setup-Checklist.pdf"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-stone-900 text-white text-xs font-medium hover:bg-stone-800 transition-colors"
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                      <span>Test Direct PDF Download</span>
+                    </a>
+                    <a
+                      href="/checklist/google-maps"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-stone-300 bg-white text-stone-800 text-xs font-medium hover:bg-stone-50 transition-colors"
+                    >
+                      <FileText className="w-3.5 h-3.5 text-stone-500" />
+                      <span>Preview Printable Cheatsheet (/checklist/google-maps)</span>
+                    </a>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-3 pt-4">
                   <Button onClick={() => saveSection("settings", "global", settings)} disabled={saving === "settings"}>
                     <Save className="w-4 h-4 mr-2" />
                     {saving === "settings" ? "Saving..." : "Save Newsletter Settings"}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    type="button"
+                    onClick={() =>
+                      setSettings({
+                        ...settings,
+                        newsletter: {
+                          ...DEFAULT_SETTINGS.newsletter,
+                          isEnabled: settings?.newsletter?.isEnabled ?? true,
+                        },
+                      })
+                    }
+                  >
+                    <RefreshCw className="w-4 h-4 mr-2" />
+                    Load Recommended Lead Magnet Copy
                   </Button>
                   <StatusLine status={status.settings ?? null} />
                 </div>

@@ -32,7 +32,7 @@ export function Future({ data: initialData }: { data?: FutureContent }) {
   return (
     <section 
       id="upcoming" 
-      className="py-24"
+      className="py-24 scroll-mt-20"
       style={{ 
         backgroundColor: data.backgroundColor || 'var(--cream-lighter)',
         color: data.textColor || 'var(--foreground)'

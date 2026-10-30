@@ -8,7 +8,7 @@ export function Services({ data }: { data: ServicesContent }) {
   return (
     <section 
       id="services" 
-      className="py-24"
+      className="py-24 scroll-mt-20"
       style={{ 
         backgroundColor: data.backgroundColor || 'var(--primary)',
         color: data.textColor || 'var(--primary-foreground)'

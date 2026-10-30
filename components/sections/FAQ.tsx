@@ -35,7 +35,7 @@ export function FAQ({ data: initialData }: { data?: FaqContent }) {
   return (
     <section 
       id="faq" 
-      className="py-24"
+      className="py-24 scroll-mt-20"
       style={{ 
         backgroundColor: data.backgroundColor || 'var(--background)',
         color: data.textColor || 'var(--foreground)'

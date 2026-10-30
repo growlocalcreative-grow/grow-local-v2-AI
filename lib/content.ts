@@ -68,73 +68,106 @@ export interface FutureContent {
   textColor?: string;
 }
 
+export interface PartnerProject {
+  id: string;
+  name: string;
+  url: string;
+  displayUrl: string;
+  status: "live" | "in-progress";
+  statusLabel: string;
+  category: string;
+  tagline: string;
+  problemSolved: string;
+  description: string;
+  features: string[];
+  metrics: { label: string; value: string }[];
+  accentColor: string;
+  seed: string;
+  gradient: string;
+}
+
+export interface PartnersPageContent {
+  eyebrow: string;
+  headline: string;
+  headlineEmphasis: string;
+  subhead: string;
+  bannerTitle: string;
+  bannerDescription: string;
+  ctaTitle: string;
+  ctaDescription: string;
+  ctaButtonText: string;
+  projects: PartnerProject[];
+}
+
 // --- Defaults (used until an admin edits + saves content in Firestore) ---
 
 export const DEFAULT_HERO: HeroContent = {
-  eyebrow: "COOL, CA · GEORGETOWN DIVIDE · SERVING EL DORADO & PLACER COUNTIES",
-  headline: "Getting Your Business",
-  headlineEmphasis: "Online, Made Simple",
+  eyebrow: "COOL · AUBURN · PLACERVILLE · EL DORADO & PLACER COUNTIES",
+  headline: "Turn More Local Searches Into",
+  headlineEmphasis: "Paying Customers",
   subhead:
-    "I'm your neighborhood professional button pusher — helping small businesses, nonprofits, churches, and local makers across the Divide get a simple, working website without the tech headache. No jargon, no big-agency price tag, just a neighbor who's good with computers.",
-  ctaLabel: "Let's Chat",
+    "Fast, modern websites, clear mobile menus, and local search foundations built for Foothill contractors, specialty eateries, bakeries, and makers. Straightforward digital tools that make your phone ring, showcase your craft, and help neighbors find you.",
+  ctaLabel: "Book a Free 15-Min Chat",
   backgroundColor: "#F7F4ED",
   textColor: "#1A1A1A",
 };
 
 export const DEFAULT_ABOUT: AboutContent = {
-  badgeText: "A Neighbor, Not a Corporation",
-  heading: "\"Hi, I'm your local professional button pusher.\"",
+  badgeText: "Local Partner · Foothills Proud",
+  heading: "\"Hi, I'm your local digital growth partner.\"",
   paragraphs: [
-    "I live right here in Cool, CA, and I spend a lot of my time helping folks across the Foothills — small business owners, nonprofit leaders, church volunteers, and local makers — who just need their business online and aren't sure where to start.",
-    "No computer science degree, no fancy corporate team. I'm entrepreneurial, mostly self-taught, and I genuinely enjoy figuring this stuff out so you don't have to.",
-    "I'll also be upfront with you: I lean on AI tools to help me build faster and keep my prices down. Sometimes that means the code under the hood isn't picture-perfect because of my own prompts — but the site you see and use works, and I test everything myself before it ever goes live.",
-    "Whether you need a simple one-page site, help getting found on Google, or just someone to explain what all this \"online\" stuff even means, I'm here to push the buttons so you don't have to.",
+    "I live right here in Cool, CA, working with hard-working small business owners across the Georgetown Divide, Auburn, Placerville, and the Foothills. Whether you're running a trade crew, serving up comfort food at a local eatery or food truck, or crafting specialty goods, your business deserves a digital presence that actually drives revenue.",
+    "Most agencies charge big-city prices and speak in confusing tech jargon. I don't. I take a practical, builder's approach: websites that load in a flash on spotty foothill cell connections, clear Google presence, and frictionless forms that send customer inquiries straight to your phone.",
+    "I build custom, modern systems tailored to how rural and foothill businesses actually operate — whether that's an online menu for hungry weekenders, an instant quote form for home services, or getting your Google listing to reflect your real hours and location.",
+    "Whether your current site is slow and outdated, or you're starting fresh, I'm right down the road to help you look great, build trust, and win more local business.",
   ],
   backgroundColor: "#FFFFFF",
   textColor: "#1A1A1A",
 };
 
 export const DEFAULT_SERVICES: ServicesContent = {
-  heading: "Simple Web Tools for Local Neighbors",
+  heading: "Practical Digital Tools for Local Businesses & Shops",
   subheading:
-    "No jargon, no enterprise price tag — just the basics done right, so your business, nonprofit, or passion project can be found online.",
+    "Built specifically for Foothill contractors, specialty eateries, retail shops, and makers who want more local customers without the tech headache.",
   items: [
     {
-      title: "Basic Website Setup",
+      title: "High-Converting Local Websites",
       description:
-        "A clean, simple site that tells people who you are, what you do, and how to reach you. Perfect if you don't have a website yet.",
+        "Clean, fast, mobile-first websites designed to turn visitors into phone calls and store visits. Perfectly tailored for trade contractors, local shops, and independent businesses.",
       icon: "Globe",
-      badge: "POPULAR",
+      badge: "MOST POPULAR",
     },
     {
-      title: "Website Rescues",
+      title: "Restaurant & Food Truck Menus",
       description:
-        "If your current site is broken, outdated, or just plain embarrassing, I'll clean it up and get it working again.",
-      icon: "LifeBuoy",
+        "Ditch the clunky, unreadable PDF menus. Give customers a snappy, mobile-first menu with clear pricing, daily hours, and catering inquiry forms that actually look appetizing.",
+      icon: "Utensils",
+      badge: "FOOD & SPECIALTY",
     },
     {
-      title: "Google Business Profile Setup",
+      title: "Google Business & Map Optimization",
       description:
-        "Make sure local folks can actually find you when they search. I'll get your Google listing dialed in so you show up.",
-      icon: "Search",
+        "Get your Google Business Profile claimed, verified, and dialed in with proper categories, hours, and photos so nearby neighbors find you first when searching.",
+      icon: "MapPin",
+      badge: "SEARCH READY",
     },
     {
-      title: "Simple Contact & Booking Forms",
+      title: "Instant Lead & Quote Alerts",
       description:
-        "A basic way for people to reach out or book time with you, right from your site — no complicated software to learn.",
+        "Stop losing customers to phone tag. Custom contact and quote-request forms that route inquiries straight to your phone as an instant text or email notification.",
       icon: "Smartphone",
     },
     {
-      title: "Nonprofit & Community Pages",
+      title: "Website Rescues & Modernization",
       description:
-        "Churches, clubs, and local nonprofits get the same simple, honest approach — built to fit a volunteer budget.",
-      icon: "Heart",
+        "Is your current site broken, slow, or embarrassing on a smartphone? We modernize your existing domain in days so you can proudly put it on your truck, flyer, or storefront.",
+      icon: "LifeBuoy",
     },
     {
-      title: "AI-Assisted Builds, Transparently",
+      title: "5-Star Review & Reputation Booster",
       description:
-        "I use AI tools to build faster and keep costs down, and I'm upfront about that. I test everything myself before you ever see it.",
-      icon: "Sparkles",
+        "A frictionless 1-tap review link to text happy customers after a job or meal, helping you climb Google Maps by collecting genuine 5-star reviews on autopilot.",
+      icon: "Star",
     },
   ],
   backgroundColor: "#F7F4ED",
@@ -142,26 +175,26 @@ export const DEFAULT_SERVICES: ServicesContent = {
 };
 
 export const DEFAULT_FREEBIES: FreebiesContent = {
-  eyebrow: "Special Offers",
-  heading: "Community Freebies",
+  eyebrow: "Zero-Risk Support",
+  heading: "Free Foothill Growth Resources",
   subheading:
-    "I'm a maker first. Sometimes the best way to start a partnership is by helping you solve a small problem for free.",
+    "No pressure, no hard sell. Just honest, practical guidance from a neighbor to help your local business stand out and thrive.",
   items: [
     {
-      title: "Free Website Audit",
+      title: "Free 3-Minute Video 'Leak' Audit",
       description:
-        "Got an existing site but not getting any calls or messages? I'll look it over and send you a quick video with 3 simple fixes to stop losing folks.",
+        "Send over your website or Google listing. I'll record a private 3-minute video showing 3 specific spots where you might be losing local customers to competitors.",
       icon: "Search",
-      buttonText: "Get My Free Audit",
-      href: "mailto:growlocalcreative@gmail.com?subject=Free%20Website%20Audit%20Request&body=Hi%20Renee%2C%20I'd%20love%20a%20free%20audit%20to%20see%20how%20I%20can%20get%20my%20business%20found%20online%20more%20easily.%20Here%20is%20my%20current%20domain%3A",
+      buttonText: "Request My Free Audit",
+      href: "mailto:growlocalcreative@gmail.com?subject=Free%203-Minute%20Website%20Audit&body=Hi%20Renee%2C%20I'd%20love%20a%20free%203-minute%20video%20audit%20of%20my%20business%20presence.%20My%20business%20name%20or%20website%20is%3A",
     },
     {
-      title: "Free Business Landing Page",
+      title: "Google Search & Mobile Readiness Check",
       description:
-        "Don't have a website at all? Let's get you on the map. I'll set up a simple, clean, single-page site so local folks can actually find you — whether you run a small shop, a nonprofit, or a side hustle.",
-      icon: "Monitor",
-      buttonText: "Claim My Free Page",
-      href: "mailto:growlocalcreative@gmail.com?subject=Free%20Landing%20Page%20Inquiry&body=Hi%20Renee%2C%20I%20don't%20have%20a%20website%20yet%20and%20I'd%20love%20to%20chat%20about%20a%20simple%20landing%20page%20to%20get%20my%20business%20online.",
+        "Unsure if your Google Maps pin, hours, and mobile view are set up properly? I'll review your local presence and email you a simple checklist of quick wins you can implement right away.",
+      icon: "CheckCircle2",
+      buttonText: "Get My Readiness Check",
+      href: "mailto:growlocalcreative@gmail.com?subject=Google%20Readiness%20Check&body=Hi%20Renee%2C%20could%20you%20check%20my%20Google%20listing%20and%20tell%20me%20what%20quick%20improvements%20I%20should%20make%3F%20My%20business%20name%20is%3A",
     },
   ],
   backgroundColor: "#F7F4ED",
@@ -170,24 +203,24 @@ export const DEFAULT_FREEBIES: FreebiesContent = {
 
 export const DEFAULT_FUTURE: FutureContent = {
   heading: "What's Coming Next",
-  subheading: "Building one neighbor at a time, for the real problems I keep seeing.",
+  subheading: "Practical digital tools built one neighbor at a time for real everyday business needs.",
   items: [
     {
-      title: "Branded Mini CMS",
-      description: "The same simple content editor built for this site, given to your business too — update your own text and offers anytime, no code required.",
-      icon: "LayoutTemplate",
-      slug: "branded-mini-cms",
+      title: "Interactive Digital Menus & Daily Specials",
+      description: "Update your daily specials, soup of the day, or sold-out items from your phone in 10 seconds — without touching any code.",
+      icon: "Utensils",
+      slug: "digital-menu-specials",
     },
     {
-      title: "Link-in-Bio Page",
-      description: "One clean link you can put on a flyer, business card, or QR code, pointing people to everything: your site, socials, and a way to reach you.",
-      icon: "Link2",
+      title: "Instant QR & Link-in-Bio Card",
+      description: "One clean link you can put on table tents, takeout boxes, or flyers pointing people to your menu, Instagram, and Google review link.",
+      icon: "Store",
       slug: "link-in-bio",
     },
     {
-      title: "Simple Contact Tracker",
-      description: "A lightweight way to keep notes on customers, donors, or members — built for folks who are done wrestling with spreadsheets.",
-      icon: "Users",
+      title: "Simple Customer & Estimate Tracker",
+      description: "A lightweight way to track catering inquiries, estimates, or loyal customers without getting bogged down in complicated spreadsheets.",
+      icon: "Clock",
       slug: "simple-contact-tracker",
     },
   ],
@@ -242,36 +275,183 @@ export interface SiteSettings {
 
 export const DEFAULT_FAQ: FaqContent = {
   heading: "Common Questions",
-  subheading: "The stuff folks usually ask before reaching out.",
+  subheading: "Straightforward answers to the questions folks usually ask before reaching out.",
   items: [
     {
-      question: "Do I need to already have a domain or hosting?",
+      question: "Do you only work with contractors, or do you also help restaurants, bakeries, and shops?",
       answer:
-        "Nope. If you don't have a domain yet, I'll walk you through getting one and getting it connected. If you already have a site somewhere, I can work with what's there.",
+        "Both! We love working with Foothill trades (contractors, tree care, septic, landscaping) as well as our beloved local restaurants, bakeries, coffee spots, and makers. Whether you need a streamlined mobile menu, an instant quote calculator, or Google Maps setup, the focus is always on making it easy for customers to spend money with you.",
     },
     {
-      question: "Do you work with nonprofits and churches, not just businesses?",
+      question: "Will you guarantee that I rank #1 on Google?",
       answer:
-        "Yes. I work with small businesses, nonprofits, churches, and local makers across the Georgetown Divide and El Dorado & Placer Counties — the approach is the same simple, honest process either way.",
+        "No honest developer can guarantee a #1 ranking because Google's algorithm changes constantly. What we DO guarantee is building a bulletproof foundation: a verified Google Business Profile, accurate categories and hours, local search tags, blazing fast mobile speeds, and a 1-tap review link that helps you naturally rise above local competitors.",
     },
     {
-      question: "What does the free website audit actually include?",
+      question: "Can I update my own menu, specials, or hours later?",
       answer:
-        "I'll look over your current site and send you a short video walking through 3 simple fixes that could help you get more calls or messages from it — no obligation.",
+        "Yes, absolutely. We hand over the keys and give you an easy way to update your weekly specials, menu items, or business hours with zero technical stress.",
     },
     {
-      question: "You mentioned using AI tools. What does that mean for my site?",
+      question: "What if I don't have a domain or website yet?",
       answer:
-        "I use AI-assisted tools to build faster and keep costs down, which I think is only fair to be upfront about. I test every site myself before it goes live, so you're never the first one finding the bugs.",
+        "No problem at all. We will walk you through registering your domain, setting up your email, and getting everything connected. If you already have an existing site that needs a rescue, we can work with what you have.",
     },
     {
-      question: "Do I need to sign a long contract?",
+      question: "Do I have to sign a long-term contract?",
       answer:
-        "No long contracts. We talk about what you need, I give you a straightforward price, and we go from there — neighbor to neighbor.",
+        "Never. We talk through your goals, give you a transparent, flat-rate project price, and deliver on time. Neighbor to neighbor, no corporate games.",
     },
   ],
   backgroundColor: "#FFFFFF",
   textColor: "#1A1A1A",
+};
+
+export const DEFAULT_PARTNERS: PartnersPageContent = {
+  eyebrow: "OUR WORK & LOCAL PARTNERSHIPS",
+  headline: "Real Local Work.",
+  headlineEmphasis: "Real Community Impact.",
+  subhead:
+    "Take a look at the websites, mobile menus, and digital tools we've built right here in the Georgetown Divide and Foothills. From local contractors and business alliances to smokehouse menus and community charities—fast, honest, and built to turn interest into action.",
+  bannerTitle: "Why We Build for Local Groups & Community Neighbors",
+  bannerDescription:
+    "When our neighbors thrive, the entire Georgetown Divide thrives. We build high-performance web systems for community clubs, local charities, and trade businesses alike because every local enterprise deserves a modern, lightning-fast digital storefront without corporate price tags, tech jargon, or monthly hostage fees.",
+  ctaTitle: "Ready for a Website That Actually Rings Your Phone?",
+  ctaDescription:
+    "Whether you're a contractor looking to lock in high-margin jobs, a local bakery needing a menu folks can actually read, or a service business ready to get found on Google—let's build your 24/7 digital storefront.",
+  ctaButtonText: "Book a Free 15-Minute Local Growth Chat",
+  projects: [
+    {
+      id: "fixitcool",
+      name: "Fix It Cool",
+      url: "https://www.fixitcool.com",
+      displayUrl: "www.fixitcool.com",
+      status: "live",
+      statusLabel: "Live Website",
+      category: "Contractors & Home Repairs",
+      tagline: "Turning urgent home repair searches into immediate phone calls.",
+      problemSolved: "Homeowners in Cool and the Divide needed a fast way to find reliable local help without wading through corporate directories or non-responsive forms.",
+      description: "Designed for immediate mobile action. Built to load in under a second on spotty Sierra cell reception, featuring prominent one-tap calling, clear repair service categories, and verified local Foothills service radiuses.",
+      features: [
+        "One-tap emergency call & text buttons in header",
+        "Sub-second load times on rural 3G/LTE connections",
+        "Focused service areas covering Cool, ALT & the Divide",
+        "Clear upfront repair lists (carpentry, decks, plumbing, maintenance)"
+      ],
+      metrics: [
+        { label: "Mobile Speed", value: "< 0.8s" },
+        { label: "Conversion Focus", value: "Direct Call" },
+        { label: "Target Area", value: "Georgetown Divide" }
+      ],
+      accentColor: "#2F5233",
+      seed: "fixitcool",
+      gradient: "from-emerald-950 via-slate-900 to-emerald-900"
+    },
+    {
+      id: "alt-business",
+      name: "ALT Business Connections",
+      url: "https://www.altbusinessconnections.org",
+      displayUrl: "www.altbusinessconnections.org",
+      status: "live",
+      statusLabel: "Live Website",
+      category: "Business Alliance & Networking",
+      tagline: "Keeping local commerce and connection circulating right here on the Divide.",
+      problemSolved: "Local entrepreneurs needed a centralized digital home to showcase verified local merchants and drive attendance to monthly networking breakfasts.",
+      description: "A welcoming, modern community hub that spotlights homegrown Divide businesses. Features an accessible directory, upcoming breakfast and mixer schedules, and straightforward membership paths to strengthen regional commerce.",
+      features: [
+        "Searchable local merchant & trade professional directory",
+        "Monthly breakfast meeting announcements & RSVPs",
+        "Community-first branding celebrating Divide business owners",
+        "Frictionless updates without complex maintenance overhead"
+      ],
+      metrics: [
+        { label: "Community Reach", value: "Georgetown Divide" },
+        { label: "Member Hub", value: "Directory & Events" },
+        { label: "Design Style", value: "Warm Foothill" }
+      ],
+      accentColor: "#B46524",
+      seed: "altbusiness",
+      gradient: "from-amber-950 via-stone-900 to-amber-900"
+    },
+    {
+      id: "divide-womens-club",
+      name: "Divide Women's Club",
+      url: "https://www.dividewomensclub.org",
+      displayUrl: "www.dividewomensclub.org",
+      status: "live",
+      statusLabel: "Live Website",
+      category: "Community & Historic Nonprofit",
+      tagline: "Decades of community giving, youth scholarships, and volunteer events made modern.",
+      problemSolved: "A historic community anchor needed to modernize their outreach, simplify student scholarship applications, and boost turnout for community charity events.",
+      description: "Serving our mountain towns for generations, the Divide Women's Club now has an elegant, high-accessibility web presence. Local students and parents can easily apply for scholarships, and neighbors can stay informed on seasonal fundraisers.",
+      features: [
+        "Digital scholarship application downloads & deadline alerts",
+        "Seasonal event calendars (craft faires, bake sales, teas)",
+        "High-contrast, large-print mobile friendly typography",
+        "Tribute to decades of Foothill community heritage and service"
+      ],
+      metrics: [
+        { label: "Impact", value: "Annual Scholarships" },
+        { label: "Community", value: "Divide Towns" },
+        { label: "Format", value: "Accessible & Clean" }
+      ],
+      accentColor: "#4B5542",
+      seed: "dividewomen",
+      gradient: "from-stone-950 via-zinc-900 to-emerald-950"
+    },
+    {
+      id: "pigsure-bbq",
+      name: "Pig-Sure Perfect BBQ",
+      url: "https://pig-sure-perfect-bbq.growlocalcreative.workers.dev/",
+      displayUrl: "pig-sure-perfect-bbq.workers.dev",
+      status: "in-progress",
+      statusLabel: "In The Workshop",
+      category: "Artisanal Eatery & Catering",
+      tagline: "Mouth-watering mobile menu & catering booking engine designed to pack the pit.",
+      problemSolved: "Hungry customers abandoning slow, pinch-and-zoom PDF menus while trying to find weekend smokehouse pop-up locations.",
+      description: "Nothing loses a customer faster than an unreadable PDF menu on a phone. For Pig-Sure Perfect BBQ, we designed an ultra-fast digital menu, real-time pop-up schedule, and instant catering quote pipeline that lets locals book authentic slow-smoked meats in seconds.",
+      features: [
+        "Zero-PDF mobile menu with vivid meats & sides breakdowns",
+        "Automated event catering quote request form with guest-count slider",
+        "Pop-up location tracker for weekend smoke sessions",
+        "Edge-deployed on Cloudflare Workers for instant 50ms load times"
+      ],
+      metrics: [
+        { label: "Menu Load", value: "< 300ms" },
+        { label: "Hosting", value: "Cloudflare Edge" },
+        { label: "Conversion", value: "Catering Bookings" }
+      ],
+      accentColor: "#8B2E15",
+      seed: "pigsurebbq",
+      gradient: "from-red-950 via-stone-900 to-amber-950"
+    },
+    {
+      id: "cool-charity",
+      name: "Cool Charity",
+      url: "https://www.coolcharity.org",
+      displayUrl: "www.coolcharity.org",
+      status: "in-progress",
+      statusLabel: "In The Workshop",
+      category: "Grassroots Relief & Giving",
+      tagline: "Direct, transparent grassroots aid when our foothill neighbors need it most.",
+      problemSolved: "Traditional charity portals feel impersonal and take heavy administrative cuts. Cool Charity needed a direct, local platform focused on trust and direct neighbor aid.",
+      description: "Hyper-local mutual aid runs on radical transparency. Cool Charity is being built to connect Foothill neighbors directly to relief drives, emergency storm aid, and volunteer support with zero overhead and zero corporate middleman.",
+      features: [
+        "Transparent project-by-project community donation trackers",
+        "Volunteer shift & skill coordination board",
+        "Winter weather & rural emergency relief resource hub",
+        "100% focused on Cool and surrounding foothill communities"
+      ],
+      metrics: [
+        { label: "Transparency", value: "100% Local" },
+        { label: "Focus", value: "Community Aid" },
+        { label: "Structure", value: "Grassroots" }
+      ],
+      accentColor: "#2A4D69",
+      seed: "coolcharity",
+      gradient: "from-sky-950 via-slate-900 to-teal-950"
+    }
+  ]
 };
 
 export const DEFAULT_SETTINGS: SiteSettings = {
@@ -287,7 +467,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   foregroundColor: "#1A1A1A",
   cardColor: "#FFFFFF",
   borderColor: "#E5E5E5",
-  footerDescription: "Helping small businesses, nonprofits, and makers across the Georgetown Divide push the right buttons so life stays simpler.",
+  footerDescription: "Helping Foothill small businesses, contractors, eateries, and makers build strong local presences that attract customers and keep life simple.",
   socialLinks: [
     { platform: "Instagram", url: "https://instagram.com/growlocalcreative", isEnabled: true },
     { platform: "Facebook", url: "https://facebook.com/growlocalcreative", isEnabled: true },
@@ -297,10 +477,10 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   hiddenSections: [],
   newsletter: {
     isEnabled: true,
-    title: "Let's stay connected across the Divide.",
-    description: "Every once in a while, I share a quick, jargon-free tip to help local businesses and non-profits run smoother online. No spam, ever.",
-    cta: "Drop Me a Line",
-    successMessage: "Thanks for joining! Keep an eye on your inbox for neighborly updates."
+    title: "Grab the 5-Minute Google Maps Setup Checklist",
+    description: "Get our step-by-step 1-page PDF checklist showing exactly how to optimize your Google Business profile so local Foothill neighbors find you first—plus occasional practical web tips.",
+    cta: "Send Me the Free Checklist",
+    successMessage: "You're all set! Check your inbox for your 5-Minute Google Maps Checklist."
   }
 };
 
@@ -341,6 +521,7 @@ export const getServicesContent = () => fetchContentDoc<ServicesContent>("servic
 export const getFreebiesContent = () => fetchContentDoc<FreebiesContent>("freebies", DEFAULT_FREEBIES);
 export const getFutureContent = () => fetchContentDoc<FutureContent>("future", DEFAULT_FUTURE);
 export const getFaqContent = () => fetchContentDoc<FaqContent>("faq", DEFAULT_FAQ);
+export const getPartnersContent = () => fetchContentDoc<PartnersPageContent>("partners", DEFAULT_PARTNERS);
 
 export async function getSiteSettingsContent(): Promise<SiteSettings> {
   const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || aiStudioConfig.projectId;
@@ -358,6 +539,19 @@ export async function getSiteSettingsContent(): Promise<SiteSettings> {
       for (const key in data) {
         if (data[key] !== null && data[key] !== undefined) {
           (result as any)[key] = data[key];
+        }
+      }
+      // If newsletter is using old default copy, upgrade it to Option C checklist
+      if (result.newsletter) {
+        if (
+          !result.newsletter.title ||
+          result.newsletter.title === "Practical digital tips for Foothill business owners." ||
+          result.newsletter.title === "Join the Digest"
+        ) {
+          result.newsletter.title = DEFAULT_SETTINGS.newsletter.title;
+          result.newsletter.description = DEFAULT_SETTINGS.newsletter.description;
+          result.newsletter.cta = DEFAULT_SETTINGS.newsletter.cta;
+          result.newsletter.successMessage = DEFAULT_SETTINGS.newsletter.successMessage;
         }
       }
       return result as SiteSettings;

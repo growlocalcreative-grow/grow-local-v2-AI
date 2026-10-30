@@ -1,4 +1,6 @@
+import Link from "next/link";
 import { Mail, Phone, MapPin, Instagram, Facebook, Linkedin, Lock, Twitter, Youtube, Github, Link as LinkIcon } from "lucide-react";
+import { FooterNewsletter } from "@/components/FooterNewsletter";
 import type { SiteSettings } from "@/lib/content";
 
 const iconMap: Record<string, any> = {
@@ -14,8 +16,11 @@ export function Footer({ settings }: { settings: SiteSettings }) {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-primary text-primary-foreground pt-16 pb-8">
+    <footer className="bg-primary text-primary-foreground pt-14 pb-8">
       <div className="container mx-auto px-4">
+        {/* Inline Lead Magnet Checklist Banner */}
+        <FooterNewsletter newsletter={settings.newsletter} />
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
           {/* Brand & Mission */}
           <div className="space-y-4">
@@ -91,13 +96,14 @@ export function Footer({ settings }: { settings: SiteSettings }) {
 
         <div className="pt-8 border-t border-primary-foreground/10 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-primary-foreground/40">
           <p>© {currentYear} {settings.agencyName}. All rights reserved.</p>
-          <div className="flex gap-6">
+          <div className="flex flex-wrap gap-6 items-center">
+            <Link href="/partners" className="hover:text-secondary font-medium text-primary-foreground/80">Our Work & Partners</Link>
             <a href="#" className="hover:text-secondary">Privacy Policy</a>
             <a href="#" className="hover:text-secondary">Terms of Service</a>
-            <a href="/admin" className="hover:text-secondary flex items-center gap-1.5 opacity-60 hover:opacity-100 transition-opacity">
+            <Link href="/admin" className="hover:text-secondary flex items-center gap-1.5 opacity-60 hover:opacity-100 transition-opacity">
               <Lock className="h-3 w-3" />
               Admin Login
-            </a>
+            </Link>
           </div>
         </div>
       </div>

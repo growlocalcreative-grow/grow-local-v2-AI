@@ -24,15 +24,51 @@ export function Header({ settings }: { settings: SiteSettings }) {
     faq: { name: "FAQ", href: isHome ? "#faq" : "/#faq" },
   };
 
+  const isPartners = pathname === "/partners";
+
   const dynamicLinks = (settings.sectionOrder || ["hero", "about", "services", "future", "freebies", "faq"])
     .filter(id => id !== "hero" && !(settings.hiddenSections || []).includes(id))
     .map(id => sectionMap[id])
     .filter(Boolean);
 
-  const navLinks = [
-    ...dynamicLinks,
-    { name: "Admin Login", href: "/admin", icon: Lock },
+  interface NavItem {
+    name: string;
+    href: string;
+    isCurrent?: boolean;
+    icon?: any;
+  }
+
+  const navLinks: NavItem[] = [
+    { name: "Our Work", href: "/partners", isCurrent: isPartners },
+    ...dynamicLinks.map(link => ({ ...link, isCurrent: false })),
+    { name: "Admin Login", href: "/admin", icon: Lock, isCurrent: pathname === "/admin" },
   ];
+
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    setIsOpen(false);
+
+    if (href.includes("#")) {
+      const targetId = href.split("#")[1];
+      if (typeof window !== "undefined") {
+        (window as unknown as { __targetHash?: string | null }).__targetHash = targetId;
+      }
+
+      if (isHome) {
+        const elem = document.getElementById(targetId);
+        if (elem) {
+          e.preventDefault();
+          const headerOffset = 80;
+          const elementPosition = elem.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.scrollY - headerOffset;
+          window.scrollTo({
+            top: Math.max(0, offsetPosition),
+            behavior: "smooth",
+          });
+          window.history.pushState(null, "", `#${targetId}`);
+        }
+      }
+    }
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md">
@@ -42,7 +78,15 @@ export function Header({ settings }: { settings: SiteSettings }) {
           animate={{ opacity: 1, x: 0 }}
           className="flex items-center gap-3"
         >
-          <Link href="/" className="flex items-center gap-3 group">
+          <Link 
+            href="/" 
+            onClick={() => {
+              if (typeof window !== "undefined") {
+                (window as unknown as { __targetHash?: string | null }).__targetHash = null;
+              }
+            }}
+            className="flex items-center gap-3 group"
+          >
             <div className="relative h-12 w-12 overflow-hidden rounded-full border-2 border-primary/10 transition-transform group-hover:scale-105">
               <img
                 src="/logo.png"
@@ -61,18 +105,21 @@ export function Header({ settings }: { settings: SiteSettings }) {
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
-            <a
+            <Link
               key={link.name}
               href={link.href}
+              onClick={(e) => handleNavClick(e, link.href)}
               className={`text-sm font-medium transition-colors hover:text-primary ${
-                link.name === "Admin Login" 
-                  ? "text-muted-foreground/50 hover:text-primary flex items-center gap-1.5" 
+                link.isCurrent
+                  ? "text-primary font-semibold border-b-2 border-primary pb-0.5"
+                  : link.name === "Admin Login"
+                  ? "text-muted-foreground/50 hover:text-primary flex items-center gap-1.5"
                   : "text-muted-foreground"
               }`}
             >
               {link.name === "Admin Login" && <Lock className="h-3.5 w-3.5" />}
               {link.name}
-            </a>
+            </Link>
           ))}
           <Button variant="default" size="sm" onClick={onContactOpen}>
             Get in Touch
@@ -93,19 +140,21 @@ export function Header({ settings }: { settings: SiteSettings }) {
               </SheetHeader>
               <nav className="flex flex-col gap-6 mt-12">
                 {navLinks.map((link) => (
-                  <a
+                  <Link
                     key={link.name}
                     href={link.href}
-                    onClick={() => setIsOpen(false)}
+                    onClick={(e) => handleNavClick(e, link.href)}
                     className={`font-heading font-medium transition-colors hover:text-primary ${
-                      link.name === "Admin Login"
+                      link.isCurrent
+                        ? "text-2xl text-primary font-bold pl-2 border-l-4 border-primary"
+                        : link.name === "Admin Login"
                         ? "text-lg text-muted-foreground/60 flex items-center gap-2 mt-4 pt-4 border-t"
                         : "text-2xl text-foreground"
                     }`}
                   >
                     {link.name === "Admin Login" && <Lock className="h-4 w-4" />}
                     {link.name}
-                  </a>
+                  </Link>
                 ))}
                 <div className="pt-6 border-t">
                   <p className="text-sm text-muted-foreground mb-4">Contact Info</p>

@@ -15,6 +15,15 @@ import {
   Heart,
   Camera,
   ShoppingBag,
+  Utensils,
+  MapPin,
+  Star,
+  Coffee,
+  Store,
+  Clock,
+  Truck,
+  PhoneCall,
+  MessageSquare,
   type LucideIcon,
 } from "lucide-react";
 
@@ -35,6 +44,15 @@ export const ICON_MAP: Record<string, LucideIcon> = {
   Heart,
   Camera,
   ShoppingBag,
+  Utensils,
+  MapPin,
+  Star,
+  Coffee,
+  Store,
+  Clock,
+  Truck,
+  PhoneCall,
+  MessageSquare,
 };
 
 export const ICON_OPTIONS = Object.keys(ICON_MAP);

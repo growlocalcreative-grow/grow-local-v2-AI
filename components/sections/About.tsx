@@ -7,7 +7,7 @@ export function About({ data }: { data: AboutContent }) {
   return (
     <section 
       id="about" 
-      className="py-24"
+      className="py-24 scroll-mt-20"
       style={{ 
         backgroundColor: data.backgroundColor || '#FAF9F5',
         color: data.textColor || 'var(--foreground)'

@@ -30,25 +30,25 @@ export async function generateMetadata(): Promise<Metadata> {
         canonical: "https://growlocalcreative.com",
       },
       title: {
-        default: `${settings.agencyName} | Web Design for Georgetown Divide`,
+        default: `${settings.agencyName} | Web Design & Local Growth for Foothill Businesses`,
         template: `%s | ${settings.agencyName}`,
       },
       description:
-        "Simple, phone-friendly websites for small businesses, nonprofits, and makers across the Georgetown Divide, Northern Foothill Sierras, and El Dorado & Placer Counties. No jargon, no big-agency price tag.",
+        "Fast websites, mobile menus, and local Google search foundations for Foothill contractors, eateries, specialty shops, and makers across El Dorado & Placer Counties.",
       keywords: [
         "Web Design Georgetown Divide",
+        "Contractor Websites Cool CA",
+        "Restaurant Mobile Menu Auburn CA",
         "Small Business Website Cool CA",
-        "Nonprofit Web Design El Dorado County",
-        "Local SEO Cool CA",
-        "Foothill Sierra Web Development",
-        "Simple Websites for Makers",
-        "Grow Local Creative",
-        "Georgetown CA Website Builder"
+        "Google Business Profile Setup El Dorado County",
+        "Local Search Foothill Sierra",
+        "Placerville Web Design",
+        "Grow Local Creative"
       ],
       openGraph: {
-        title: `${settings.agencyName} | Simple Websites for Local Businesses`,
+        title: `${settings.agencyName} | Turn Local Searches into Paying Customers`,
         description:
-          "A neighbor, not a corporation. Simple, phone-friendly websites for small businesses, nonprofits, churches, and makers around Cool, CA.",
+          "Fast websites, clear mobile menus, and Google presence for Foothill contractors, eateries, and specialty makers.",
         url: "https://growlocalcreative.com",
         siteName: settings.agencyName,
         locale: "en_US",

@@ -9,6 +9,7 @@ import {
   getAboutContent,
   getServicesContent,
   getFreebiesContent,
+  getFaqContent,
   getSiteSettingsContent,
 } from "@/lib/content";
 
@@ -17,11 +18,12 @@ export const revalidate = 3600;
 
 // Page content
 export default async function HomePage() {
-  const [hero, about, services, freebies, settings] = await Promise.all([
+  const [hero, about, services, freebies, faq, settings] = await Promise.all([
     getHeroContent(),
     getAboutContent(),
     getServicesContent(),
     getFreebiesContent(),
+    getFaqContent(),
     getSiteSettingsContent(),
   ]);
 
@@ -37,13 +39,11 @@ export default async function HomePage() {
       case "services":
         return <Services key="services" data={services} />;
       case "future":
-        // Future now fetches its own data on client
         return <Future key="future" />;
       case "freebies":
         return <Freebies key="freebies" data={freebies} />;
       case "faq":
-        // FAQ now fetches its own data on client
-        return <FAQ key="faq" />;
+        return <FAQ key="faq" data={faq} />;
       default:
         return null;
     }
