@@ -7,14 +7,33 @@ This project deploys as a **Cloudflare Worker** (not Cloudflare Pages) using `@o
 1. Go to **Workers & Pages → Create → Workers Builds** (or "Connect to Git" if that's what your dashboard shows).
 2. Connect your GitHub account and select the `Grow-Local-Creative` repo.
 3. Set these build settings:
-   - **Build command:** `npm run deploy`
-   - **Deploy command:** leave blank — `npm run deploy` handles both the build and the deploy in one step (it runs `opennextjs-cloudflare build && opennextjs-cloudflare deploy`).
+   - **Build command:** `npx opennextjs-cloudflare build --dangerouslyUseUnsupportedNextVersion` (or `npm run deploy` / `npm run build:worker`)
+   - **Deploy command:** leave blank (or `npx wrangler deploy .open-next/worker.js`)
    - **Root directory:** `/` (or wherever you place these files in the repo)
 4. Save. Cloudflare will now build and deploy automatically on every push to `main`.
 
+## Fix for "ERROR Next.js version 15.5.x is not supported by the Next.js team"
+
+If Cloudflare build fails with:
+`ERROR Next.js version 15.5.26 is not supported by the Next.js team. If you want to proceed anyway, use the --dangerouslyUseUnsupportedNextVersion flag.`
+
+**Why this occurs:** OpenNext Cloudflare includes an automated 2-year calendar timer from Next 15's release date (October 2024). Once that calendar date is passed, OpenNext prompts for this flag to acknowledge continued LTS use.
+
+**How to fix:**
+In the Cloudflare dashboard under **Workers & Pages → Settings → Builds**:
+- Update your **Build command** to:
+  ```bash
+  npx opennextjs-cloudflare build --dangerouslyUseUnsupportedNextVersion
+  ```
+  Or:
+  ```bash
+  npm run deploy
+  ```
+  *(which already includes this flag in `package.json`).*
+
 ## If you hit the same build error as Fix It Cool
 
-That project's issue was in **Settings → Builds** — double check the Node.js compatibility flag and build command there match what's above. If the build fails, the error log in the Cloudflare dashboard will name the missing setting directly.
+That project's issue was in **Settings → Builds** — double check the Node.js compatibility flag (`nodejs_compat`) and build command there match what's above. If the build fails, the error log in the Cloudflare dashboard will name the missing setting directly.
 
 ## Firebase
 
