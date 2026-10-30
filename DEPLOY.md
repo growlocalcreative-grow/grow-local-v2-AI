@@ -35,6 +35,11 @@ In the Cloudflare dashboard under **Workers & Pages → Settings → Builds**:
 
 That project's issue was in **Settings → Builds** — double check the Node.js compatibility flag (`nodejs_compat`) and build command there match what's above. If the build fails, the error log in the Cloudflare dashboard will name the missing setting directly.
 
+## Package Manager & Lockfiles (bun.lock vs npm)
+
+- Cloudflare automatically detects lockfiles in the root of the repository. If `bun.lock` or `bun.lockb` exists, Cloudflare switches the build pipeline to `bun install --frozen-lockfile`, which blocks scripts/postinstalls and causes mismatches.
+- We have removed `bun.lock` and standard `package-lock.json` is used. Cloudflare will now cleanly run `npm install`.
+
 ## Firebase
 
 No environment variables are needed for Firebase — the config in `lib/firebase.ts` is your public client-side Firebase config (project ID, API key, etc.), which is meant to be public and safe to ship in the bundle. Security is enforced by `firestore.rules`, not by hiding this config.
