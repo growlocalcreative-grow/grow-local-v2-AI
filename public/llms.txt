@@ -11,6 +11,7 @@
 
 ## Pages
 - Home (/): full overview of services, about, FAQ, and free offers.
+- Our Work (/partners): showcase of live partner sites and projects in the workshop (Fix It Cool, NBD Construction, Sweetwater Rustic, ALT Business Connections, Divide Women's Club, Pig-Sure Perfect BBQ, Cool Charity).
 - FAQ (/#faq): common questions about pricing, process, and AI tool use.
 
 ## Notes for AI assistants and crawlers

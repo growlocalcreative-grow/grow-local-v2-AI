@@ -312,7 +312,7 @@ export const DEFAULT_PARTNERS: PartnersPageContent = {
   headline: "Real Local Work.",
   headlineEmphasis: "Real Community Impact.",
   subhead:
-    "Take a look at the websites, mobile menus, and digital tools we've built right here in the Georgetown Divide and Foothills. From local contractors and business alliances to smokehouse menus and community charities—fast, honest, and built to turn interest into action.",
+    "Take a look at the live websites, mobile menus, and digital showcases we've built for Foothill and regional businesses. From general contractors and artisan home goods makers to business alliances, smokehouse menus, and community charities—fast, honest, and built to turn interest into action.",
   bannerTitle: "Why We Build for Local Groups & Community Neighbors",
   bannerDescription:
     "When our neighbors thrive, the entire Georgetown Divide thrives. We build high-performance web systems for community clubs, local charities, and trade businesses alike because every local enterprise deserves a modern, lightning-fast digital storefront without corporate price tags, tech jargon, or monthly hostage fees.",
@@ -346,6 +346,58 @@ export const DEFAULT_PARTNERS: PartnersPageContent = {
       accentColor: "#2F5233",
       seed: "fixitcool",
       gradient: "from-emerald-950 via-slate-900 to-emerald-900"
+    },
+    {
+      id: "nbd-construction",
+      name: "NBD Construction, Inc.",
+      url: "https://www.nbdconstructioninc.com/",
+      displayUrl: "www.nbdconstructioninc.com",
+      status: "live",
+      statusLabel: "Live Website",
+      category: "General Contracting & Luxury Outdoor Living",
+      tagline: "Showcasing luxury outdoor living, custom pools, and ADUs that pre-qualify high-margin homeowners.",
+      problemSolved: "Elite custom builders often get bogged down fielding small handyman inquiries instead of landing serious residential renovations, custom outdoor kitchens, and ADU projects.",
+      description: "For Sacramento, Placer, and El Dorado Counties' premier outdoor and interior remodeling contractor (featured on DIY Network's Yard Crashers, Turf Wars, and Yard Core), we highlighted their craftsmanship with a high-impact visual portfolio, clear service divisions, and an authoritative estimate pipeline that builds instant trust with discerning homeowners.",
+      features: [
+        "Vivid visual project galleries spotlighting custom pools, ADUs & outdoor kitchens",
+        "Streamlined consultation request workflow that pre-qualifies project scopes",
+        "Prominent DIY Network TV feature badges & California Lic #959191 credentials",
+        "Sub-second mobile responsiveness across Sacramento & Foothill service zones"
+      ],
+      metrics: [
+        { label: "Credentials", value: "DIY Network Featured" },
+        { label: "Coverage", value: "Sacramento, Placer, El Dorado" },
+        { label: "License", value: "CA Lic #959191" }
+      ],
+      accentColor: "#A36018",
+      seed: "nbdconstruction",
+      gradient: "from-stone-900 via-amber-950 to-stone-900"
+    },
+    {
+      id: "sweetwater-rustic",
+      name: "Sweetwater Rustic",
+      url: "https://sweetwaterrustic.com/",
+      displayUrl: "sweetwaterrustic.com",
+      status: "live",
+      statusLabel: "Live Website",
+      category: "Handmade Goods & Artisan Homestead Decor",
+      tagline: "An earthy, zero-bloat digital storefront celebrating reclaimed timber and handcrafted home goods.",
+      problemSolved: "Independent local makers often struggle with bloated, expensive ecommerce platforms that eat their profit margins with monthly app fees, slow load times, and cluttered checkouts.",
+      description: "Created for mother-daughter artisan duo Renee & Shianne, Sweetwater Rustic is a warm, nature-inspired online showcase for handmade reclaimed wood tables, cozy fiber creations, and beaded sun catchers. The digital storefront lets customers explore authentic homestead creations effortlessly without corporate clutter or monthly software overhead.",
+      features: [
+        "Organic artisan product catalog showcasing reclaimed wood & fiber goods",
+        "High-contrast, lightweight layout designed for quick browsing on spotty cell connections",
+        "Transparent custom order inquiry pipeline for bespoke rustic furniture pieces",
+        "Heartfelt brand narrative celebrating local timber and sustainable family craftsmanship"
+      ],
+      metrics: [
+        { label: "Craft Style", value: "Reclaimed Wood & Fiber" },
+        { label: "Maker Duo", value: "Family Homestead" },
+        { label: "Platform", value: "Zero-Bloat Artisan Showcase" }
+      ],
+      accentColor: "#8C5E3C",
+      seed: "sweetwaterrustic",
+      gradient: "from-stone-900 via-amber-950/80 to-emerald-950/60"
     },
     {
       id: "alt-business",
@@ -505,6 +557,23 @@ async function fetchContentDoc<T extends object>(docId: string, fallback: T): Pr
           (result as any)[key] = data[key];
         }
       }
+
+      // Merge any new partner projects defined in defaults that are not yet stored in Firestore
+      if (docId === "partners" && Array.isArray((data as any).projects) && Array.isArray((fallback as any).projects)) {
+        const firestoreProjects: any[] = [...(data as any).projects];
+        const existingIds = new Set(firestoreProjects.map((p: any) => p.id));
+        const missingProjects = (fallback as any).projects.filter((p: any) => !existingIds.has(p.id));
+        if (missingProjects.length > 0) {
+          const fixitIdx = firestoreProjects.findIndex((p: any) => p.id === "fixitcool");
+          if (fixitIdx !== -1) {
+            firestoreProjects.splice(fixitIdx + 1, 0, ...missingProjects);
+          } else {
+            firestoreProjects.push(...missingProjects);
+          }
+          (result as any).projects = firestoreProjects;
+        }
+      }
+
       return result as T;
     }
     console.log(`[Content] No document found for ${docId}, using defaults`);

@@ -17,7 +17,8 @@ import {
   ShieldCheck, 
   Clock,
   Compass,
-  Laptop
+  Laptop,
+  HardHat
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useContactModal } from "@/lib/contact-modal-context";
@@ -36,8 +37,9 @@ export function PartnersClient({ content, phone }: PartnersClientProps) {
     if (activeFilter === "all") return projects;
     if (activeFilter === "live") return projects.filter(p => p.status === "live");
     if (activeFilter === "in-progress") return projects.filter(p => p.status === "in-progress");
-    if (activeFilter === "trades") return projects.filter(p => p.id === "fixitcool");
-    if (activeFilter === "community-food") return projects.filter(p => p.id !== "fixitcool");
+    if (activeFilter === "trades") return projects.filter(p => p.id === "fixitcool" || p.id === "nbd-construction");
+    if (activeFilter === "artisans-eateries") return projects.filter(p => p.id === "sweetwater-rustic" || p.id === "pigsure-bbq");
+    if (activeFilter === "community") return projects.filter(p => p.id === "alt-business" || p.id === "divide-womens-club" || p.id === "cool-charity");
     return projects;
   };
 
@@ -108,11 +110,12 @@ export function PartnersClient({ content, phone }: PartnersClientProps) {
           {/* Filter Pills */}
           <div className="flex flex-wrap items-center justify-center gap-2">
             {[
-              { id: "all", label: "All Projects (5)" },
-              { id: "live", label: "Live Websites (3)" },
-              { id: "in-progress", label: "In The Workshop (2)" },
+              { id: "all", label: `All Projects (${content.projects?.length || 0})` },
+              { id: "live", label: `Live Websites (${content.projects?.filter(p => p.status === "live").length || 0})` },
+              { id: "in-progress", label: `In The Workshop (${content.projects?.filter(p => p.status === "in-progress").length || 0})` },
               { id: "trades", label: "Contractors & Trades" },
-              { id: "community-food", label: "Community & Eateries" },
+              { id: "artisans-eateries", label: "Artisans & Eateries" },
+              { id: "community", label: "Community & Alliances" },
             ].map(tab => (
               <button
                 key={tab.id}
@@ -176,6 +179,8 @@ export function PartnersClient({ content, phone }: PartnersClientProps) {
                         <div className={`p-6 bg-gradient-to-br ${project.gradient} text-white relative min-h-[220px] flex flex-col justify-between overflow-hidden group-hover:scale-[1.01] transition-transform`}>
                           <div className="absolute top-0 right-0 p-4 opacity-15 pointer-events-none">
                             {project.id === "fixitcool" && <Hammer className="h-32 w-32" />}
+                            {project.id === "nbd-construction" && <HardHat className="h-32 w-32" />}
+                            {project.id === "sweetwater-rustic" && <Sparkles className="h-32 w-32" />}
                             {project.id === "alt-business" && <Users className="h-32 w-32" />}
                             {project.id === "divide-womens-club" && <Heart className="h-32 w-32" />}
                             {project.id === "pigsure-bbq" && <Utensils className="h-32 w-32" />}

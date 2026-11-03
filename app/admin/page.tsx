@@ -64,7 +64,24 @@ function StatusLine({ status }: { status: Status }) {
 async function loadContentDoc<T>(docId: string, fallback: T): Promise<T> {
   try {
     const res = await getDocumentAction("content", docId);
-    if (res.success && res.data) return { ...fallback, ...res.data };
+    if (res.success && res.data) {
+      const merged: any = { ...fallback, ...res.data };
+      if (docId === "partners" && Array.isArray((res.data as any).projects) && Array.isArray((fallback as any).projects)) {
+        const firestoreProjects = [...(res.data as any).projects];
+        const existingIds = new Set(firestoreProjects.map((p: any) => p.id));
+        const missingProjects = (fallback as any).projects.filter((p: any) => !existingIds.has(p.id));
+        if (missingProjects.length > 0) {
+          const fixitIdx = firestoreProjects.findIndex((p: any) => p.id === "fixitcool");
+          if (fixitIdx !== -1) {
+            firestoreProjects.splice(fixitIdx + 1, 0, ...missingProjects);
+          } else {
+            firestoreProjects.push(...missingProjects);
+          }
+          merged.projects = firestoreProjects;
+        }
+      }
+      return merged;
+    }
   } catch (error) {
     console.error(error);
   }
@@ -663,7 +680,7 @@ export default function AdminPage() {
                     Featured Partner Websites ({partners.projects?.length || 0})
                   </h3>
                   <span className="text-xs text-muted-foreground font-mono">
-                    3 Live Websites · 2 In The Workshop
+                    {partners.projects?.filter(p => p.status === "live").length || 0} Live Websites · {partners.projects?.filter(p => p.status === "in-progress").length || 0} In The Workshop
                   </span>
                 </div>
 
