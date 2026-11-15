@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
-import { getPartnersContent, getSiteSettingsContent } from "@/lib/content";
+import { DEFAULT_BOOKING_URL, getPartnersContent, getSiteSettingsContent } from "@/lib/content";
 import { PartnersClient } from "@/components/partners/PartnersClient";
 
 export const revalidate = 3600;
@@ -68,7 +68,11 @@ export default async function PartnersPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
       />
       <main className="flex-grow">
-        <PartnersClient content={partners} phone={settings.phone} />
+        <PartnersClient
+          content={partners}
+          phone={settings.phone}
+          bookingUrl={settings.bookingUrl || DEFAULT_BOOKING_URL}
+        />
       </main>
     </>
   );

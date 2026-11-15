@@ -1,13 +1,14 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { motion } from "motion/react";
-import { MapPin } from "lucide-react";
+import { MapPin, Calendar } from "lucide-react";
 import { useContactModal } from "@/lib/contact-modal-context";
-import type { HeroContent } from "@/lib/content";
+import { DEFAULT_BOOKING_URL, type HeroContent } from "@/lib/content";
 
-export function Hero({ data }: { data: HeroContent }) {
+export function Hero({ data, bookingUrl }: { data: HeroContent; bookingUrl?: string }) {
   const { open: onContactOpen } = useContactModal();
+  const calendarHref = bookingUrl || DEFAULT_BOOKING_URL;
 
   return (
     <section 
@@ -55,8 +56,26 @@ export function Hero({ data }: { data: HeroContent }) {
           transition={{ duration: 0.6, delay: 0.3 }}
           className="flex flex-col sm:flex-row items-center justify-center gap-4"
         >
-          <Button size="lg" className="w-full sm:w-auto px-8 py-6 text-lg rounded-full" onClick={onContactOpen}>
-            {data.ctaLabel}
+          <a
+            href={calendarHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={buttonVariants({
+              size: "lg",
+              className: "w-full sm:w-auto px-8 py-6 text-lg rounded-full gap-2.5 shadow-md hover:bg-primary/90",
+            })}
+          >
+            <Calendar className="h-5 w-5" />
+            <span>{data.ctaLabel}</span>
+          </a>
+          <Button
+            type="button"
+            variant="outline"
+            size="lg"
+            onClick={onContactOpen}
+            className="w-full sm:w-auto px-7 py-6 text-base rounded-full border-primary/25 hover:bg-primary/5"
+          >
+            Call or Text Now
           </Button>
         </motion.div>
       </div>

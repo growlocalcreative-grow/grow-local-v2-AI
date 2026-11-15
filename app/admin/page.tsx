@@ -1408,6 +1408,15 @@ export default function AdminPage() {
                   <Label htmlFor="location">Location Text</Label>
                   <Input id="location" value={settings?.location || ""} onChange={(e) => setSettings({ ...settings, location: e.target.value })} />
                 </div>
+                <div className="space-y-2 md:col-span-2">
+                  <Label htmlFor="bookingUrl">Google Booking Calendar URL (&quot;Book a Free 15-Min Chat&quot; Links)</Label>
+                  <Input
+                    id="bookingUrl"
+                    placeholder="https://calendar.app.google/..."
+                    value={settings?.bookingUrl || ""}
+                    onChange={(e) => setSettings({ ...settings, bookingUrl: e.target.value })}
+                  />
+                </div>
                 <div className="space-y-2">
                   <Label htmlFor="primaryColor">Primary Color (Buttons, Icons)</Label>
                   <div className="flex gap-2">

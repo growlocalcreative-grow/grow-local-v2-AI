@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { Mail, Phone, MapPin, Instagram, Facebook, Linkedin, Lock, Twitter, Youtube, Github, Link as LinkIcon } from "lucide-react";
+import { Mail, Phone, MapPin, Instagram, Facebook, Linkedin, Lock, Twitter, Youtube, Github, Link as LinkIcon, Calendar } from "lucide-react";
 import { FooterNewsletter } from "@/components/FooterNewsletter";
-import type { SiteSettings } from "@/lib/content";
+import { DEFAULT_BOOKING_URL, type SiteSettings } from "@/lib/content";
 
 const iconMap: Record<string, any> = {
   Instagram: Instagram,
@@ -47,6 +47,17 @@ export function Footer({ settings }: { settings: SiteSettings }) {
           <div className="space-y-4">
             <h3 className="font-heading text-xl font-medium">Get in Touch</h3>
             <ul className="space-y-3">
+              <li>
+                <a
+                  href={settings.bookingUrl || DEFAULT_BOOKING_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 hover:text-secondary transition-colors font-medium"
+                >
+                  <Calendar className="h-5 w-5 text-secondary" />
+                  <span>Book a Free 15-Min Chat</span>
+                </a>
+              </li>
               <li>
                 <a href={`mailto:${settings.email}`} className="flex items-center gap-3 hover:text-secondary transition-colors">
                   <Mail className="h-5 w-5 text-secondary" />

@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Download, Printer, Copy, Check, Sparkles, MapPin, Star, Phone, Mail, FileText, CheckCircle2 } from "lucide-react";
+import { Download, Printer, Copy, Check, Sparkles, MapPin, Star, Phone, Mail, FileText, CheckCircle2, Calendar } from "lucide-react";
+import { DEFAULT_BOOKING_URL } from "@/lib/content";
 
 export function ChecklistInteractiveView() {
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
@@ -282,10 +283,19 @@ export function ChecklistInteractiveView() {
 
           <div className="flex flex-col sm:flex-row md:flex-col gap-2 shrink-0">
             <a
-              href="tel:9168694142"
+              href={DEFAULT_BOOKING_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#2D3328] text-white text-xs font-semibold shadow hover:bg-stone-800 transition-colors"
             >
-              <Phone className="w-3.5 h-3.5 text-secondary" />
+              <Calendar className="w-3.5 h-3.5 text-secondary" />
+              <span>Book a Free 15-Min Chat</span>
+            </a>
+            <a
+              href="tel:9168694142"
+              className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white text-stone-900 border border-stone-300 text-xs font-semibold hover:bg-stone-50 transition-colors"
+            >
+              <Phone className="w-3.5 h-3.5 text-[#2D3328]" />
               <span>Call / Text (916) 869-4142</span>
             </a>
             <a

@@ -18,20 +18,23 @@ import {
   Clock,
   Compass,
   Laptop,
-  HardHat
+  HardHat,
+  Calendar
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { useContactModal } from "@/lib/contact-modal-context";
-import type { PartnersPageContent, PartnerProject } from "@/lib/content";
+import { DEFAULT_BOOKING_URL, type PartnersPageContent, type PartnerProject } from "@/lib/content";
 
 interface PartnersClientProps {
   content: PartnersPageContent;
   phone: string;
+  bookingUrl?: string;
 }
 
-export function PartnersClient({ content, phone }: PartnersClientProps) {
+export function PartnersClient({ content, phone, bookingUrl }: PartnersClientProps) {
   const [activeFilter, setActiveFilter] = useState<string>("all");
   const { open: onContactOpen } = useContactModal();
+  const calendarHref = bookingUrl || DEFAULT_BOOKING_URL;
 
   const filterProjects = (projects: PartnerProject[]) => {
     if (activeFilter === "all") return projects;
@@ -367,14 +370,19 @@ export function PartnersClient({ content, phone }: PartnersClientProps) {
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button
-                size="lg"
-                onClick={onContactOpen}
-                className="w-full sm:w-auto px-8 py-6 text-base font-semibold rounded-full bg-secondary text-secondary-foreground hover:bg-secondary/90 shadow-md gap-2"
+              <a
+                href={calendarHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={buttonVariants({
+                  size: "lg",
+                  className: "w-full sm:w-auto px-8 py-6 text-base font-semibold rounded-full bg-secondary text-secondary-foreground hover:bg-secondary/90 shadow-md gap-2",
+                })}
               >
+                <Calendar className="h-4 w-4" />
                 <span>{content.ctaButtonText}</span>
                 <ArrowRight className="h-4 w-4" />
-              </Button>
+              </a>
               <a
                 href={`tel:${phone.replace(/[^0-9]/g, "")}`}
                 className="w-full sm:w-auto px-8 py-4 rounded-full border border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 text-base font-medium transition-colors inline-flex items-center justify-center gap-2"

@@ -251,6 +251,7 @@ export interface SiteSettings {
   agencyName: string;
   email: string;
   phone: string;
+  bookingUrl?: string;
   location: string;
   primaryColor: string;
   primaryForeground: string;
@@ -506,10 +507,13 @@ export const DEFAULT_PARTNERS: PartnersPageContent = {
   ]
 };
 
+export const DEFAULT_BOOKING_URL = "https://calendar.app.google/Vhb1PU6YaQBDuNdQ7";
+
 export const DEFAULT_SETTINGS: SiteSettings = {
   agencyName: "Grow Local Creative",
   email: "growlocalcreative@gmail.com",
   phone: "916-869-4142",
+  bookingUrl: DEFAULT_BOOKING_URL,
   location: "Based in Cool, CA",
   primaryColor: "#3D4337",
   primaryForeground: "#F7F4ED",

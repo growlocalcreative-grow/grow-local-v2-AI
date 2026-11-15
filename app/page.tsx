@@ -5,6 +5,7 @@ import { Future } from "@/components/sections/Future";
 import { Freebies } from "@/components/sections/Freebies";
 import { FAQ } from "@/components/sections/FAQ";
 import {
+  DEFAULT_BOOKING_URL,
   getHeroContent,
   getAboutContent,
   getServicesContent,
@@ -33,7 +34,7 @@ export default async function HomePage() {
   const renderSection = (id: string) => {
     switch (id) {
       case "hero":
-        return <Hero key="hero" data={hero} />;
+        return <Hero key="hero" data={hero} bookingUrl={settings.bookingUrl || DEFAULT_BOOKING_URL} />;
       case "about":
         return <About key="about" data={about} />;
       case "services":
