@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Script from "next/script";
 import { DEFAULT_BOOKING_URL, getPartnersContent, getSiteSettingsContent } from "@/lib/content";
 import { PartnersClient } from "@/components/partners/PartnersClient";
 
@@ -7,20 +6,36 @@ export const revalidate = 3600;
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettingsContent();
+  const title = "Our Work & Local Partners";
+  const description =
+    "Explore real websites, mobile menus, and digital tools built for contractors, smokehouses, artisan makers, business alliances, and community charities across Cool, Auburn, Roseville, Folsom, Placerville, and the Sierra Foothills.";
+
   return {
-    title: `Our Work & Local Partners | Websites Built for Foothill Businesses | ${settings.agencyName}`,
-    description:
-      "Explore real websites, mobile menus, and digital tools built for Foothill contractors, smokehouses, business alliances, and community charities across Cool, Georgetown, and Auburn, CA.",
+    title,
+    description,
     alternates: {
       canonical: "https://growlocalcreative.com/partners",
     },
     openGraph: {
-      title: `Our Work & Local Partners | ${settings.agencyName}`,
-      description:
-        "Real local websites built for Foothill contractors, smokehouses, and community groups. Fast, mobile-first, and designed to turn clicks into phone calls.",
+      title: `${title} | ${settings.agencyName}`,
+      description,
       url: "https://growlocalcreative.com/partners",
       siteName: settings.agencyName,
       type: "website",
+      images: [
+        {
+          url: "/logo.png",
+          width: 800,
+          height: 800,
+          alt: `${settings.agencyName} local portfolio`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} | ${settings.agencyName}`,
+      description,
+      images: ["/logo.png"],
     },
   };
 }
@@ -31,12 +46,12 @@ export default async function PartnersPage() {
     getSiteSettingsContent(),
   ]);
 
-  const schemaData = {
+  const collectionSchema = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    name: "Our Work & Local Partners | Grow Local Creative",
+    name: `Our Work & Local Partners | ${settings.agencyName}`,
     description:
-      "Showcase of local websites and digital tools built for Georgetown Divide and Foothill businesses, contractors, and nonprofits.",
+      "Showcase of local websites, mobile menus, and digital tools built for Sierra Foothills and Greater Sacramento businesses, contractors, and nonprofits.",
     url: "https://growlocalcreative.com/partners",
     mainEntity: {
       "@type": "ItemList",
@@ -50,22 +65,43 @@ export default async function PartnersPage() {
           headline: project.tagline,
           description: project.description,
           creator: {
-            "@type": "LocalBusiness",
-            name: settings.agencyName,
-            telephone: settings.phone,
-            email: settings.email,
+            "@id": "https://growlocalcreative.com/#localbusiness",
           },
         },
       })),
     },
   };
 
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: "https://growlocalcreative.com",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Our Work & Local Partners",
+        item: "https://growlocalcreative.com/partners",
+      },
+    ],
+  };
+
   return (
     <>
-      <Script
-        id="partners-jsonld"
+      <script
+        id="partners-collection-schema"
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionSchema) }}
+      />
+      <script
+        id="partners-breadcrumb-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
       <main className="flex-grow">
         <PartnersClient

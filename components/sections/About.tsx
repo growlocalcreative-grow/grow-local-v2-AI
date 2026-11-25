@@ -1,31 +1,26 @@
 "use client";
 
-import { motion } from "motion/react";
 import type { AboutContent } from "@/lib/content";
 
 export function About({ data }: { data: AboutContent }) {
   return (
-    <section 
-      id="about" 
+    <section
+      id="about"
       className="py-24 scroll-mt-20"
-      style={{ 
-        backgroundColor: data.backgroundColor || '#FAF9F5',
-        color: data.textColor || 'var(--foreground)'
+      style={{
+        backgroundColor: data.backgroundColor || "#FAF9F5",
+        color: data.textColor || "var(--foreground)",
       }}
     >
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="relative"
-          >
+          <div className="relative">
             <div className="aspect-[4/5] overflow-hidden rounded-[2rem] shadow-2xl">
               <img
                 src="/spruce-leaves.jpg"
-                alt="Spruce leaves in the Foothills"
+                alt="Evergreen spruce leaves representing Grow Local Creative in the Sierra Foothills"
+                width={800}
+                height={1000}
                 className="h-full w-full object-cover"
                 referrerPolicy="no-referrer"
                 onError={(e) => {
@@ -38,15 +33,9 @@ export function About({ data }: { data: AboutContent }) {
                 {data.badgeText}
               </span>
             </div>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="space-y-8"
-          >
+          <div className="space-y-8">
             <div className="space-y-4">
               <h2 className="font-heading text-4xl md:text-5xl font-medium text-foreground">
                 {data.heading}
@@ -61,7 +50,7 @@ export function About({ data }: { data: AboutContent }) {
                 </p>
               ))}
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>

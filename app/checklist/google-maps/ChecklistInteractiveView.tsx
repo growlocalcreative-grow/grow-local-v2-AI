@@ -1,12 +1,27 @@
 "use client";
 
 import { useState } from "react";
-import { Download, Printer, Copy, Check, Sparkles, MapPin, Star, Phone, Mail, FileText, CheckCircle2, Calendar } from "lucide-react";
-import { DEFAULT_BOOKING_URL } from "@/lib/content";
+import { Download, Printer, Copy, Check, Sparkles, Phone, Mail, Calendar } from "lucide-react";
+import { DEFAULT_BOOKING_URL, OFFICIAL_EMAIL } from "@/lib/content";
 
-export function ChecklistInteractiveView() {
+interface ChecklistInteractiveViewProps {
+  bookingUrl?: string;
+  email?: string;
+  phone?: string;
+}
+
+export function ChecklistInteractiveView({
+  bookingUrl,
+  email,
+  phone,
+}: ChecklistInteractiveViewProps) {
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
   const [copiedReviewScript, setCopiedReviewScript] = useState(false);
+
+  const calendarHref = bookingUrl || DEFAULT_BOOKING_URL;
+  const contactEmail = email || OFFICIAL_EMAIL;
+  const contactPhone = phone || "916-869-4142";
+  const phoneDigits = contactPhone.replace(/[^0-9]/g, "") || "9168694142";
 
   const toggleCheck = (id: string) => {
     setCheckedItems((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -43,7 +58,7 @@ export function ChecklistInteractiveView() {
         {
           id: "step1-3",
           bold: "Explicitly designate local Foothill service areas:",
-          text: "Add targeted towns: Cool (95614), Georgetown (95634), Auburn (95603/95604), Greenwood, Pilot Hill, Coloma, Lotus, Placerville (95667), Meadow Vista, Foresthill. Google ranks you where you explicitly say you work.",
+          text: "Add targeted towns: Cool (95614), Auburn (95603/95604), Roseville, Loomis, Lincoln, Folsom, Fair Oaks, Foresthill, Placerville (95667), Camino, Pollock Pines, Grass Valley, and Nevada City. Google ranks you where you explicitly say you work.",
         },
       ],
     },
@@ -65,7 +80,7 @@ export function ChecklistInteractiveView() {
         {
           id: "step2-3",
           bold: "Inspect your top local rival:",
-          text: "Open Google Maps, search your trade in Auburn or Placerville, and look at the gray tag under the top 3 results. Match their primary category.",
+          text: "Open Google Maps, search your trade in Auburn, Roseville, or Placerville, and look at the gray tag under the top 3 results. Match their primary category.",
         },
       ],
     },
@@ -127,7 +142,7 @@ export function ChecklistInteractiveView() {
         {
           id: "step5-2",
           bold: "The 2-Sentence Local Formula:",
-          text: "Every Friday, click 'Add update' -> post 1 photo of what you worked on this week + 2 sentences: 'Wrapping up a custom metal roof installation out in Georgetown before the weekend rain!'",
+          text: "Every Friday, click 'Add update' -> post 1 photo of what you worked on this week + 2 sentences: 'Wrapping up a custom metal roof installation out in Camino before the weekend rain!'",
         },
         {
           id: "step5-3",
@@ -145,17 +160,18 @@ export function ChecklistInteractiveView() {
         <div className="relative z-10 space-y-3">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-secondary/30 text-[#E7EBD8] border border-secondary/40">
-              <Sparkles className="w-3.5 h-3.5 text-secondary" />
+              <Sparkles className="w-3.5 h-3.5 text-secondary" aria-hidden="true" />
               <span>Grow Local Creative • Foothill Action Guide</span>
             </div>
 
             <div className="flex items-center gap-2 print:hidden">
               <button
+                type="button"
                 onClick={handlePrint}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-stone-200 text-xs font-medium transition-colors"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/15 hover:bg-white/25 text-stone-100 text-xs font-medium transition-colors"
                 title="Print this cheatsheet"
               >
-                <Printer className="w-3.5 h-3.5" />
+                <Printer className="w-3.5 h-3.5" aria-hidden="true" />
                 <span>Print / Save PDF</span>
               </button>
               <a
@@ -164,7 +180,7 @@ export function ChecklistInteractiveView() {
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-secondary text-primary text-xs font-semibold hover:bg-secondary/90 transition-colors"
                 title="Download direct 1-page PDF file"
               >
-                <Download className="w-3.5 h-3.5" />
+                <Download className="w-3.5 h-3.5" aria-hidden="true" />
                 <span>Direct PDF</span>
               </a>
             </div>
@@ -174,12 +190,12 @@ export function ChecklistInteractiveView() {
             5-Minute Google Maps Setup Checklist
           </h1>
 
-          <p className="text-stone-300 text-sm sm:text-base max-w-2xl leading-relaxed">
-            The practical, zero-fluff playbook for Cool, Auburn, Placerville, and Georgetown Divide businesses to outrank competitors on Google Maps.
+          <p className="text-stone-200 text-sm sm:text-base max-w-2xl leading-relaxed">
+            The practical, zero-fluff playbook for Cool, Auburn, Roseville, Folsom, Placerville, Camino, Grass Valley, and Sierra Foothills businesses to outrank competitors on Google Maps.
           </p>
         </div>
 
-        <div className="mt-4 pt-4 border-t border-white/15 flex flex-wrap items-center justify-between text-xs text-stone-400 gap-2">
+        <div className="mt-4 pt-4 border-t border-white/15 flex flex-wrap items-center justify-between text-xs text-stone-200 gap-2">
           <span>Printable 1-Page Cheatsheet · Instant Local Action</span>
           <span>Updated for 2026 · Sierra Foothills Focus</span>
         </div>
@@ -200,63 +216,61 @@ export function ChecklistInteractiveView() {
                 {step.title}
               </h2>
             </div>
-            <p className="text-xs text-stone-500 mb-4 pl-1">{step.subtitle}</p>
+            <p className="text-xs text-stone-600 mb-4 pl-1">{step.subtitle}</p>
 
             <div className="space-y-3 pl-1">
               {step.items.map((item) => {
                 const isChecked = !!checkedItems[item.id];
                 return (
-                  <div
-                    key={item.id}
-                    onClick={() => toggleCheck(item.id)}
-                    className="flex items-start gap-3 text-sm text-stone-700 cursor-pointer select-none group"
-                  >
+                  <div key={item.id} className="space-y-2">
                     <button
                       type="button"
-                      aria-label="Toggle task"
-                      className={`mt-0.5 w-5 h-5 rounded-md border flex items-center justify-center shrink-0 transition-colors ${
-                        isChecked
-                          ? "bg-secondary border-secondary text-primary"
-                          : "border-stone-300 bg-white group-hover:border-secondary"
-                      }`}
+                      aria-pressed={isChecked}
+                      onClick={() => toggleCheck(item.id)}
+                      className="flex w-full items-start gap-3 text-left text-sm text-stone-700 cursor-pointer group rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                     >
-                      {isChecked && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                      <span
+                        aria-hidden="true"
+                        className={`mt-0.5 w-5 h-5 rounded-md border flex items-center justify-center shrink-0 transition-colors ${
+                          isChecked
+                            ? "bg-secondary border-secondary text-primary"
+                            : "border-stone-400 bg-white group-hover:border-secondary"
+                        }`}
+                      >
+                        {isChecked && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                      </span>
+
+                      <span className={`flex-1 text-xs sm:text-sm leading-relaxed ${isChecked ? "line-through text-stone-500" : ""}`}>
+                        <strong className="text-stone-900 font-semibold">{item.bold}</strong> {item.text}
+                      </span>
                     </button>
 
-                    <div className="flex-1 space-y-1.5">
-                      <p className={`text-xs sm:text-sm leading-relaxed ${isChecked ? "line-through text-stone-400" : ""}`}>
-                        <strong className="text-stone-900 font-semibold">{item.bold}</strong> {item.text}
-                      </p>
-
-                      {item.hasScript && (
-                        <div
-                          onClick={(e) => e.stopPropagation()}
-                          className="mt-2 rounded-xl bg-white border border-stone-200 p-3 sm:p-4 text-xs font-mono text-stone-800 space-y-2 relative"
-                        >
-                          <p className="leading-relaxed">
-                            &ldquo;Hey [Name], thanks for trusting us today! If you have 30 seconds, a quick Google review helps our small Foothills family business immensely: [PASTE_YOUR_LINK]&rdquo;
-                          </p>
-                          <div className="flex justify-end print:hidden">
-                            <button
-                              onClick={copyScript}
-                              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-700 font-sans text-xs font-medium transition-colors"
-                            >
-                              {copiedReviewScript ? (
-                                <>
-                                  <Check className="w-3 h-3 text-green-600" />
-                                  <span className="text-green-600">Copied to Clipboard!</span>
-                                </>
-                              ) : (
-                                <>
-                                  <Copy className="w-3 h-3 text-stone-500" />
-                                  <span>Copy Text Script</span>
-                                </>
-                              )}
-                            </button>
-                          </div>
+                    {item.hasScript && (
+                      <div className="ml-8 rounded-xl bg-white border border-stone-200 p-3 sm:p-4 text-xs font-mono text-stone-800 space-y-2 relative">
+                        <p className="leading-relaxed">
+                          &ldquo;Hey [Name], thanks for trusting us today! If you have 30 seconds, a quick Google review helps our small Foothills family business immensely: [PASTE_YOUR_LINK]&rdquo;
+                        </p>
+                        <div className="flex justify-end print:hidden">
+                          <button
+                            type="button"
+                            onClick={copyScript}
+                            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-700 font-sans text-xs font-medium transition-colors"
+                          >
+                            {copiedReviewScript ? (
+                              <>
+                                <Check className="w-3 h-3 text-green-700" aria-hidden="true" />
+                                <span className="text-green-700">Copied to Clipboard!</span>
+                              </>
+                            ) : (
+                              <>
+                                <Copy className="w-3 h-3 text-stone-600" aria-hidden="true" />
+                                <span>Copy Text Script</span>
+                              </>
+                            )}
+                          </button>
                         </div>
-                      )}
-                    </div>
+                      </div>
+                    )}
                   </div>
                 );
               })}
@@ -270,40 +284,40 @@ export function ChecklistInteractiveView() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
           <div className="space-y-2 max-w-xl">
             <div className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-[#2D3328]">
-              <Sparkles className="w-3.5 h-3.5 text-secondary" />
+              <Sparkles className="w-3.5 h-3.5 text-[#3D4337]" aria-hidden="true" />
               <span>Grow Local Creative · Cool, CA</span>
             </div>
-            <h3 className="font-heading text-lg sm:text-xl font-bold text-[#2D3328]">
+            <h2 className="font-heading text-lg sm:text-xl font-bold text-[#2D3328]">
               Want us to audit or optimize your Google Profile and website for you?
-            </h3>
+            </h2>
             <p className="text-xs sm:text-sm text-stone-700 leading-relaxed">
-              We build fast, clean websites and handle Google Maps rankings for local contractors, restaurants, and shops across Cool, Auburn, Placerville, and Georgetown.
+              We handle Website Rescues &amp; Modernization, Google Business &amp; Map Optimization, and mobile Restaurant &amp; Food Truck Menus across Cool, Auburn, Roseville, Folsom, Placerville, Camino, and Grass Valley.
             </p>
           </div>
 
           <div className="flex flex-col sm:flex-row md:flex-col gap-2 shrink-0">
             <a
-              href={DEFAULT_BOOKING_URL}
+              href={calendarHref}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#2D3328] text-white text-xs font-semibold shadow hover:bg-stone-800 transition-colors"
             >
-              <Calendar className="w-3.5 h-3.5 text-secondary" />
+              <Calendar className="w-3.5 h-3.5 text-secondary" aria-hidden="true" />
               <span>Book a Free 15-Min Chat</span>
             </a>
             <a
-              href="tel:9168694142"
+              href={`tel:${phoneDigits}`}
               className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white text-stone-900 border border-stone-300 text-xs font-semibold hover:bg-stone-50 transition-colors"
             >
-              <Phone className="w-3.5 h-3.5 text-[#2D3328]" />
-              <span>Call / Text (916) 869-4142</span>
+              <Phone className="w-3.5 h-3.5 text-[#2D3328]" aria-hidden="true" />
+              <span>Call / Text {contactPhone}</span>
             </a>
             <a
-              href="mailto:growlocalcreative@gmail.com"
+              href={`mailto:${contactEmail}`}
               className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white text-stone-900 border border-stone-300 text-xs font-medium hover:bg-stone-50 transition-colors"
             >
-              <Mail className="w-3.5 h-3.5 text-stone-600" />
-              <span>Email Us</span>
+              <Mail className="w-3.5 h-3.5 text-stone-600" aria-hidden="true" />
+              <span>Email {contactEmail}</span>
             </a>
           </div>
         </div>

@@ -73,11 +73,11 @@ export function FooterNewsletter({ newsletter }: FooterNewsletterProps) {
             <span>Free 5-Minute Action Guide</span>
           </div>
 
-          <h3 className="font-heading text-2xl sm:text-3xl font-bold text-primary-foreground tracking-tight leading-tight">
+          <h2 className="font-heading text-2xl sm:text-3xl font-bold text-primary-foreground tracking-tight leading-tight">
             {title}
-          </h3>
+          </h2>
 
-          <p className="text-primary-foreground/80 text-sm sm:text-base leading-relaxed max-w-xl">
+          <p className="text-primary-foreground/90 text-sm sm:text-base leading-relaxed max-w-xl">
             {description}
           </p>
         </div>
@@ -89,9 +89,9 @@ export function FooterNewsletter({ newsletter }: FooterNewsletterProps) {
               <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-secondary text-primary mx-auto mb-1">
                 <CheckCircle2 className="h-7 w-7" />
               </div>
-              <h4 className="font-heading text-xl font-semibold text-primary-foreground">
+              <h3 className="font-heading text-xl font-semibold text-primary-foreground">
                 Checklist Download Ready!
-              </h4>
+              </h3>
               <p className="text-sm text-primary-foreground/90 leading-relaxed">
                 Your direct 1-page PDF download has been initiated. You can also re-download it or view the printable cheatsheet below.
               </p>
@@ -116,7 +116,11 @@ export function FooterNewsletter({ newsletter }: FooterNewsletterProps) {
           ) : (
             <form onSubmit={handleSubmit} className="space-y-3">
               <div className="flex flex-col sm:flex-row gap-2">
+                <label htmlFor="footer-newsletter-email" className="sr-only">
+                  Email address
+                </label>
                 <Input
+                  id="footer-newsletter-email"
                   type="email"
                   placeholder="Enter your email address..."
                   value={email}
@@ -141,11 +145,11 @@ export function FooterNewsletter({ newsletter }: FooterNewsletterProps) {
               </div>
 
               {status === "error" && (
-                <p className="text-xs text-rose-300 pl-1 font-medium">{errorMessage}</p>
+                <p className="text-xs text-rose-200 pl-1 font-medium">{errorMessage}</p>
               )}
 
-              <p className="text-xs text-primary-foreground/75 pl-1 flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-secondary shrink-0" />
+              <p className="text-xs text-primary-foreground/90 pl-1 flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-secondary shrink-0" aria-hidden="true" />
                 <span>Includes instant download of the 5-Minute Google Maps Setup Checklist (PDF) · No spam · Practical Foothills advice only</span>
               </p>
             </form>

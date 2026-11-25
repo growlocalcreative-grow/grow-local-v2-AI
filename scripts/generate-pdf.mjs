@@ -314,7 +314,7 @@ async function generateChecklistPDF() {
   );
 
   page.drawText(
-    'specialty shops, and eateries in Cool, Auburn, Placerville, and the Georgetown Divide. No corporate fluff, just real local results.',
+    'specialty shops, and eateries across Cool, Auburn, Roseville, Folsom, Placerville, Grass Valley & the Foothills.',
     {
       x: marginX + 16,
       y: footerBoxY + footerBoxHeight - 45,
@@ -333,7 +333,7 @@ async function generateChecklistPDF() {
     color: cDarkForest,
   });
 
-  page.drawText('CALL OR TEXT: (916) 869-4142   |   EMAIL: growlocalcreative@gmail.com   |   WEB: www.growlocalcreative.com', {
+  page.drawText('CALL OR TEXT: (916) 869-4142   |   EMAIL: renee@growlocalcreative.com   |   WEB: growlocalcreative.com', {
     x: marginX + 22,
     y: footerBoxY + 15,
     size: 7.5,

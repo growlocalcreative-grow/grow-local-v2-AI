@@ -1,10 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Menu, Mail, Phone, Lock } from "lucide-react";
+import { Menu, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { motion } from "motion/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useContactModal } from "@/lib/contact-modal-context";
@@ -16,32 +15,16 @@ export function Header({ settings }: { settings: SiteSettings }) {
   const isHome = pathname === "/";
   const { open: onContactOpen } = useContactModal();
 
-  const sectionMap: Record<string, { name: string; href: string }> = {
-    about: { name: "About", href: isHome ? "#about" : "/#about" },
-    future: { name: "Upcoming Tools", href: isHome ? "#upcoming" : "/#upcoming" },
-    services: { name: "Services", href: isHome ? "#services" : "/#services" },
-    freebies: { name: "Free Tools", href: isHome ? "#freebies" : "/#freebies" },
-    faq: { name: "FAQ", href: isHome ? "#faq" : "/#faq" },
-  };
-
-  const isPartners = pathname === "/partners";
-
-  const dynamicLinks = (settings.sectionOrder || ["hero", "about", "services", "future", "freebies", "faq"])
-    .filter(id => id !== "hero" && !(settings.hiddenSections || []).includes(id))
-    .map(id => sectionMap[id])
-    .filter(Boolean);
-
-  interface NavItem {
-    name: string;
-    href: string;
-    isCurrent?: boolean;
-    icon?: any;
-  }
-
-  const navLinks: NavItem[] = [
-    { name: "Our Work", href: "/partners", isCurrent: isPartners },
-    ...dynamicLinks.map(link => ({ ...link, isCurrent: false })),
-    { name: "Admin Login", href: "/admin", icon: Lock, isCurrent: pathname === "/admin" },
+  const navLinks = [
+    { name: "Services", href: "/services", isCurrent: pathname?.startsWith("/services") },
+    { name: "Service Areas", href: "/locations", isCurrent: pathname?.startsWith("/locations") },
+    { name: "Our Work", href: "/partners", isCurrent: pathname === "/partners" },
+    {
+      name: "Maps Checklist",
+      href: "/checklist/google-maps",
+      isCurrent: pathname?.startsWith("/checklist"),
+    },
+    { name: "FAQ", href: isHome ? "#faq" : "/#faq", isCurrent: false },
   ];
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
@@ -71,26 +54,24 @@ export function Header({ settings }: { settings: SiteSettings }) {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="flex items-center gap-3"
-        >
-          <Link 
-            href="/" 
+    <header className="sticky top-0 z-50 w-full border-b bg-background/85 backdrop-blur-md">
+      <div className="container mx-auto flex h-16 items-center justify-between gap-8 px-4">
+        <div className="flex items-center gap-3 shrink-0">
+          <Link
+            href="/"
             onClick={() => {
               if (typeof window !== "undefined") {
                 (window as unknown as { __targetHash?: string | null }).__targetHash = null;
               }
             }}
-            className="flex items-center gap-3 group"
+            className="flex items-center gap-3 group whitespace-nowrap shrink-0"
           >
-            <div className="relative h-12 w-12 overflow-hidden rounded-full border-2 border-primary/10 transition-transform group-hover:scale-105">
+            <div className="relative h-11 w-11 overflow-hidden rounded-full border-2 border-primary/10 transition-transform group-hover:scale-105 shrink-0">
               <img
                 src="/logo.png"
-                alt={`${settings.agencyName} - Georgetown Divide Web Design & SEO`}
+                alt={`${settings.agencyName} - Sierra Foothills Web Design & Local SEO`}
+                width={44}
+                height={44}
                 className="h-full w-full object-cover"
                 onError={(e) => {
                   e.currentTarget.src = "https://picsum.photos/seed/growlocal/100/100";
@@ -98,47 +79,49 @@ export function Header({ settings }: { settings: SiteSettings }) {
                 referrerPolicy="no-referrer"
               />
             </div>
-            <span className="font-heading text-xl font-semibold tracking-tight hidden sm:block">{settings.agencyName}</span>
+            <span className="font-heading text-xl font-semibold tracking-tight hidden sm:block whitespace-nowrap">
+              {settings.agencyName}
+            </span>
           </Link>
-        </motion.div>
+        </div>
 
         {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-8">
+        <nav aria-label="Main navigation" className="hidden md:flex items-center gap-7">
           {navLinks.map((link) => (
             <Link
               key={link.name}
               href={link.href}
               onClick={(e) => handleNavClick(e, link.href)}
-              className={`text-sm font-medium transition-colors hover:text-primary ${
+              className={`text-sm font-medium transition-colors hover:text-primary whitespace-nowrap shrink-0 ${
                 link.isCurrent
-                  ? "text-primary font-semibold border-b-2 border-primary pb-0.5"
-                  : link.name === "Admin Login"
-                  ? "text-muted-foreground/50 hover:text-primary flex items-center gap-1.5"
+                  ? "text-primary font-semibold underline underline-offset-8 decoration-2"
                   : "text-muted-foreground"
               }`}
             >
-              {link.name === "Admin Login" && <Lock className="h-3.5 w-3.5" />}
               {link.name}
             </Link>
           ))}
-          <Button variant="default" size="sm" onClick={onContactOpen}>
+        </nav>
+
+        <div className="hidden md:flex items-center shrink-0">
+          <Button variant="default" size="sm" onClick={onContactOpen} className="whitespace-nowrap shrink-0">
             Get in Touch
           </Button>
-        </nav>
+        </div>
 
         {/* Mobile Nav */}
         <div className="md:hidden">
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <Menu className="h-6 w-6" />
+              <Button variant="ghost" size="icon" aria-label="Open navigation menu">
+                <Menu className="h-6 w-6" aria-hidden="true" />
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-[300px] sm:w-[400px]">
               <SheetHeader>
                 <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
               </SheetHeader>
-              <nav className="flex flex-col gap-6 mt-12">
+              <nav aria-label="Mobile navigation" className="flex flex-col gap-5 mt-12">
                 {navLinks.map((link) => (
                   <Link
                     key={link.name}
@@ -146,21 +129,25 @@ export function Header({ settings }: { settings: SiteSettings }) {
                     onClick={(e) => handleNavClick(e, link.href)}
                     className={`font-heading font-medium transition-colors hover:text-primary ${
                       link.isCurrent
-                        ? "text-2xl text-primary font-bold pl-2 border-l-4 border-primary"
-                        : link.name === "Admin Login"
-                        ? "text-lg text-muted-foreground/60 flex items-center gap-2 mt-4 pt-4 border-t"
+                        ? "text-2xl text-primary font-bold"
                         : "text-2xl text-foreground"
                     }`}
                   >
-                    {link.name === "Admin Login" && <Lock className="h-4 w-4" />}
                     {link.name}
                   </Link>
                 ))}
                 <div className="pt-6 border-t">
                   <p className="text-sm text-muted-foreground mb-4">Contact Info</p>
                   <div className="flex flex-col gap-4">
-                    <Button variant="outline" className="justify-start gap-3 rounded-xl" onClick={() => { onContactOpen(); setIsOpen(false); }}>
-                      <Phone className="h-4 w-4" /> Get in Touch
+                    <Button
+                      variant="outline"
+                      className="justify-start gap-3 rounded-xl"
+                      onClick={() => {
+                        onContactOpen();
+                        setIsOpen(false);
+                      }}
+                    >
+                      <Phone className="h-4 w-4" aria-hidden="true" /> Get in Touch
                     </Button>
                   </div>
                 </div>

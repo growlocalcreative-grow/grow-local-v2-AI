@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Phone, MessageSquare, Mail, Share2, X, Check, Calendar } from "lucide-react";
-import { DEFAULT_BOOKING_URL, type SiteSettings } from "@/lib/content";
+import { DEFAULT_BOOKING_URL, OFFICIAL_EMAIL, type SiteSettings } from "@/lib/content";
 
 interface ContactModalProps {
   isOpen: boolean;
@@ -15,7 +15,7 @@ export function ContactModal({ isOpen, onClose, settings }: ContactModalProps) {
   const [copied, setCopied] = useState(false);
 
   const phoneNumber = settings?.phone.replace(/[^0-9]/g, '') || "9168694142";
-  const email = settings?.email || "growlocalcreative@gmail.com";
+  const email = settings?.email || OFFICIAL_EMAIL;
   const bookingUrl = settings?.bookingUrl || DEFAULT_BOOKING_URL;
   
   const smsBody = "Hey Renee, I'm interested in some simple tools to get my business online. Got time to chat?";

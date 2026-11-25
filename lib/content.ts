@@ -186,7 +186,7 @@ export const DEFAULT_FREEBIES: FreebiesContent = {
         "Send over your website or Google listing. I'll record a private 3-minute video showing 3 specific spots where you might be losing local customers to competitors.",
       icon: "Search",
       buttonText: "Request My Free Audit",
-      href: "mailto:growlocalcreative@gmail.com?subject=Free%203-Minute%20Website%20Audit&body=Hi%20Renee%2C%20I'd%20love%20a%20free%203-minute%20video%20audit%20of%20my%20business%20presence.%20My%20business%20name%20or%20website%20is%3A",
+      href: "mailto:renee@growlocalcreative.com?subject=Free%203-Minute%20Website%20Audit&body=Hi%20Renee%2C%20I'd%20love%20a%20free%203-minute%20video%20audit%20of%20my%20business%20presence.%20My%20business%20name%20or%20website%20is%3A",
     },
     {
       title: "Google Search & Mobile Readiness Check",
@@ -194,7 +194,7 @@ export const DEFAULT_FREEBIES: FreebiesContent = {
         "Unsure if your Google Maps pin, hours, and mobile view are set up properly? I'll review your local presence and email you a simple checklist of quick wins you can implement right away.",
       icon: "CheckCircle2",
       buttonText: "Get My Readiness Check",
-      href: "mailto:growlocalcreative@gmail.com?subject=Google%20Readiness%20Check&body=Hi%20Renee%2C%20could%20you%20check%20my%20Google%20listing%20and%20tell%20me%20what%20quick%20improvements%20I%20should%20make%3F%20My%20business%20name%20is%3A",
+      href: "mailto:renee@growlocalcreative.com?subject=Google%20Readiness%20Check&body=Hi%20Renee%2C%20could%20you%20check%20my%20Google%20listing%20and%20tell%20me%20what%20quick%20improvements%20I%20should%20make%3F%20My%20business%20name%20is%3A",
     },
   ],
   backgroundColor: "#F7F4ED",
@@ -279,9 +279,14 @@ export const DEFAULT_FAQ: FaqContent = {
   subheading: "Straightforward answers to the questions folks usually ask before reaching out.",
   items: [
     {
-      question: "Do you only work with contractors, or do you also help restaurants, bakeries, and shops?",
+      question: "What are your core specialties for local businesses?",
       answer:
-        "Both! We love working with Foothill trades (contractors, tree care, septic, landscaping) as well as our beloved local restaurants, bakeries, coffee spots, and makers. Whether you need a streamlined mobile menu, an instant quote calculator, or Google Maps setup, the focus is always on making it easy for customers to spend money with you.",
+        "We focus on three high-impact areas: Website Rescues & Modernization for outdated or slow sites, Google Business & Map Optimization so nearby neighbors find you first, and fast mobile-first Restaurant & Food Truck Menus that replace clunky PDFs.",
+    },
+    {
+      question: "Which cities and counties do you serve?",
+      answer:
+        "We are based in Cool, CA and work with local businesses across El Dorado, Placer, Nevada, and Sacramento Counties — including Cool, Auburn, Roseville, Loomis, Lincoln, Folsom, Fair Oaks, Foresthill, Placerville, Camino, Pollock Pines, Grass Valley, and Nevada City.",
     },
     {
       question: "Will you guarantee that I rank #1 on Google?",
@@ -294,14 +299,14 @@ export const DEFAULT_FAQ: FaqContent = {
         "Yes, absolutely. We hand over the keys and give you an easy way to update your weekly specials, menu items, or business hours with zero technical stress.",
     },
     {
-      question: "What if I don't have a domain or website yet?",
+      question: "What if my current website is broken, outdated, or I don't have one yet?",
       answer:
-        "No problem at all. We will walk you through registering your domain, setting up your email, and getting everything connected. If you already have an existing site that needs a rescue, we can work with what you have.",
+        "We handle both Website Rescues & Modernization and brand-new builds. If your current site is slow or broken on smartphones, we can modernize your existing domain in days. If you're starting from scratch, we'll guide you through registering your domain and getting everything connected.",
     },
     {
       question: "Do I have to sign a long-term contract?",
       answer:
-        "Never. We talk through your goals, give you a transparent, flat-rate project price, and deliver on time. Neighbor to neighbor, no corporate games.",
+        "Never. We talk through your goals on a free 15-minute chat, give you a transparent, flat-rate project price, and deliver on time. Neighbor to neighbor, no corporate games.",
     },
   ],
   backgroundColor: "#FFFFFF",
@@ -507,11 +512,35 @@ export const DEFAULT_PARTNERS: PartnersPageContent = {
   ]
 };
 
-export const DEFAULT_BOOKING_URL = "https://calendar.app.google/Vhb1PU6YaQBDuNdQ7";
+export const DEFAULT_BOOKING_URL = "https://calendar.app.google/Qpbfa14Q3XqpV7B38";
+export const OFFICIAL_EMAIL = "renee@growlocalcreative.com";
+
+export const TARGET_CITIES = [
+  "Cool",
+  "Auburn",
+  "Roseville",
+  "Loomis",
+  "Lincoln",
+  "Folsom",
+  "Fair Oaks",
+  "Foresthill",
+  "Placerville",
+  "Camino",
+  "Pollock Pines",
+  "Grass Valley",
+  "Nevada City",
+] as const;
+
+export const TARGET_COUNTIES = [
+  "El Dorado County, CA",
+  "Placer County, CA",
+  "Nevada County, CA",
+  "Sacramento County, CA",
+] as const;
 
 export const DEFAULT_SETTINGS: SiteSettings = {
   agencyName: "Grow Local Creative",
-  email: "growlocalcreative@gmail.com",
+  email: OFFICIAL_EMAIL,
   phone: "916-869-4142",
   bookingUrl: DEFAULT_BOOKING_URL,
   location: "Based in Cool, CA",
@@ -578,6 +607,17 @@ async function fetchContentDoc<T extends object>(docId: string, fallback: T): Pr
         }
       }
 
+      // Upgrade any stale gmail contact links stored in Firestore freebies to the official email
+      if (docId === "freebies" && Array.isArray((result as any).items)) {
+        (result as any).items = (result as any).items.map((item: any) => ({
+          ...item,
+          href:
+            typeof item.href === "string"
+              ? item.href.replace(/mailto:growlocalcreative@gmail\.com/gi, `mailto:${OFFICIAL_EMAIL}`)
+              : item.href,
+        }));
+      }
+
       return result as T;
     }
     console.log(`[Content] No document found for ${docId}, using defaults`);
@@ -595,6 +635,10 @@ export const getFreebiesContent = () => fetchContentDoc<FreebiesContent>("freebi
 export const getFutureContent = () => fetchContentDoc<FutureContent>("future", DEFAULT_FUTURE);
 export const getFaqContent = () => fetchContentDoc<FaqContent>("faq", DEFAULT_FAQ);
 export const getPartnersContent = () => fetchContentDoc<PartnersPageContent>("partners", DEFAULT_PARTNERS);
+
+const STALE_BOOKING_URLS = new Set([
+  "https://calendar.app.google/Vhb1PU6YaQBDuNdQ7",
+]);
 
 export async function getSiteSettingsContent(): Promise<SiteSettings> {
   const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || aiStudioConfig.projectId;
@@ -614,12 +658,30 @@ export async function getSiteSettingsContent(): Promise<SiteSettings> {
           (result as any)[key] = data[key];
         }
       }
-      // If newsletter is using old default copy, upgrade it to Option C checklist
+
+      // Enforce WCAG AA accessible deep forest green over legacy low-contrast #648264
+      if (!result.primaryColor || result.primaryColor.toLowerCase() === "#648264") {
+        result.primaryColor = DEFAULT_SETTINGS.primaryColor;
+      }
+
+      // Upgrade stale public email to official business email
+      if (!result.email || result.email.toLowerCase() === "growlocalcreative@gmail.com") {
+        result.email = OFFICIAL_EMAIL;
+      }
+
+      // Upgrade old/empty booking URL to active Google Booking Calendar link
+      if (!result.bookingUrl || STALE_BOOKING_URLS.has(result.bookingUrl.trim())) {
+        result.bookingUrl = DEFAULT_BOOKING_URL;
+      }
+
+      // If newsletter is using old default copy, upgrade it to the Google Maps Checklist offer
       if (result.newsletter) {
         if (
           !result.newsletter.title ||
           result.newsletter.title === "Practical digital tips for Foothill business owners." ||
-          result.newsletter.title === "Join the Digest"
+          result.newsletter.title === "Join the Digest" ||
+          result.newsletter.title === "Let's stay connected." ||
+          result.newsletter.cta === "Get My Freebie!"
         ) {
           result.newsletter.title = DEFAULT_SETTINGS.newsletter.title;
           result.newsletter.description = DEFAULT_SETTINGS.newsletter.description;

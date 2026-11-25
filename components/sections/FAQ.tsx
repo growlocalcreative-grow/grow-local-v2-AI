@@ -50,14 +50,14 @@ export function FAQ({ data: initialData }: { data?: FaqContent }) {
       <div className="container mx-auto px-4 max-w-3xl">
         <div className="text-center mb-12 space-y-3">
           <h2 className="font-heading text-4xl md:text-5xl font-medium">{data.heading}</h2>
-          <p className="opacity-70 text-lg">{data.subheading}</p>
+          <p className="opacity-85 text-lg">{data.subheading}</p>
         </div>
 
         <Accordion type="single" collapsible className="w-full">
           {data.items.map((item, i) => (
             <AccordionItem key={i} value={`item-${i}`}>
               <AccordionTrigger className="text-left font-heading text-lg">{item.question}</AccordionTrigger>
-              <AccordionContent className="opacity-70 leading-relaxed">{item.answer}</AccordionContent>
+              <AccordionContent className="opacity-85 leading-relaxed">{item.answer}</AccordionContent>
             </AccordionItem>
           ))}
         </Accordion>

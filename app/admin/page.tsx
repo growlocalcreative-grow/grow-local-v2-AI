@@ -40,6 +40,8 @@ import {
   DEFAULT_FAQ,
   DEFAULT_PARTNERS,
   DEFAULT_SETTINGS,
+  DEFAULT_BOOKING_URL,
+  OFFICIAL_EMAIL,
   type HeroContent,
   type AboutContent,
   type ServicesContent,
@@ -79,6 +81,15 @@ async function loadContentDoc<T>(docId: string, fallback: T): Promise<T> {
           }
           merged.projects = firestoreProjects;
         }
+      }
+      if (docId === "freebies" && Array.isArray(merged.items)) {
+        merged.items = merged.items.map((item: any) => ({
+          ...item,
+          href:
+            typeof item.href === "string"
+              ? item.href.replace(/mailto:growlocalcreative@gmail\.com/gi, `mailto:${OFFICIAL_EMAIL}`)
+              : item.href,
+        }));
       }
       return merged;
     }
@@ -152,10 +163,24 @@ export default function AdminPage() {
       ...DEFAULT_SETTINGS,
       ...(settingsRes.success ? settingsRes.data : {})
     };
+    if (!mergedSettings.primaryColor || mergedSettings.primaryColor.toLowerCase() === "#648264") {
+      mergedSettings.primaryColor = DEFAULT_SETTINGS.primaryColor;
+    }
+    if (!mergedSettings.email || mergedSettings.email.toLowerCase() === "growlocalcreative@gmail.com") {
+      mergedSettings.email = OFFICIAL_EMAIL;
+    }
+    if (
+      !mergedSettings.bookingUrl ||
+      mergedSettings.bookingUrl.trim() === "https://calendar.app.google/Vhb1PU6YaQBDuNdQ7"
+    ) {
+      mergedSettings.bookingUrl = DEFAULT_BOOKING_URL;
+    }
     if (
       !mergedSettings.newsletter?.title ||
       mergedSettings.newsletter.title === "Practical digital tips for Foothill business owners." ||
-      mergedSettings.newsletter.title === "Join the Digest"
+      mergedSettings.newsletter.title === "Join the Digest" ||
+      mergedSettings.newsletter.title === "Let's stay connected." ||
+      mergedSettings.newsletter.cta === "Get My Freebie!"
     ) {
       mergedSettings.newsletter = {
         ...DEFAULT_SETTINGS.newsletter,

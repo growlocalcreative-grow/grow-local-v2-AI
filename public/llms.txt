@@ -1,18 +1,59 @@
 # Grow Local Creative
 
-> Simple, phone-friendly websites and web tools for small businesses, nonprofits, churches, and makers across the Georgetown Divide, Northern Foothill Sierras, and El Dorado & Placer Counties in California. Run by one person — a "professional button pusher," not a corporation — who is upfront about using AI-assisted tools to build faster and keep prices low.
+> Local web design, Google Business Profile optimization, and digital growth studio based in Cool, California. We specialize in Website Rescues & Modernization, Google Business & Map Optimization, and fast mobile-first Restaurant & Food Truck Menus for small businesses, contractors, eateries, makers, and community organizations across the Sierra Foothills and Greater Sacramento region.
 
-## Key facts
-- Based in Cool, CA. Serves El Dorado County and Placer County, CA.
-- Contact: growlocalcreative@gmail.com, (916) 869-4142
-- Services: basic website setup, website rescues/refreshes, Google Business Profile setup, simple contact and booking forms, nonprofit and community pages, AI-assisted builds.
-- Free offers: a free website audit (3 fixes via video), and a free basic landing page for businesses without a site yet.
-- No long-term contracts required.
+## Core Specialties (Dedicated Pages)
+- [Services Overview](https://growlocalcreative.com/services): Complete overview of flat-rate services and deliverables.
+- [Website Rescues & Modernization](https://growlocalcreative.com/services/website-rescues): Rebuilding slow, broken, or outdated small-business websites on your existing domain into clean, sub-second, mobile-first storefronts you own 100% — zero long-term contracts.
+- [Google Business & Map Optimization](https://growlocalcreative.com/services/google-business-optimization): Claiming, verifying, and tuning Google Business Profiles (rural P.O. Box-safe service-area setup, primary/secondary categories, local photos, 1-tap review links, and weekly updates) so nearby neighbors find you first on Google Maps.
+- [Restaurant & Food Truck Menus](https://growlocalcreative.com/services/restaurant-food-truck-menus): Replacing unreadable pinch-and-zoom PDF menus with instant mobile-first menus, daily specials, pop-up schedules, QR links, and catering quote pipelines.
 
-## Pages
-- Home (/): full overview of services, about, FAQ, and free offers.
-- Our Work (/partners): showcase of live partner sites and projects in the workshop (Fix It Cool, NBD Construction, Sweetwater Rustic, ALT Business Connections, Divide Women's Club, Pig-Sure Perfect BBQ, Cool Charity).
-- FAQ (/#faq): common questions about pricing, process, and AI tool use.
+## Official Contact & Booking
+- **Status**: Actively booking new projects
+- **Founder / Primary Contact**: Renee
+- **Phone / Text**: (916) 869-4142
+- **Email**: renee@growlocalcreative.com
+- **Book a Free 15-Minute Chat**: https://calendar.app.google/Qpbfa14Q3XqpV7B38
+- **Pricing Model**: Transparent flat-rate project pricing, no long-term retainers or agency lock-in, 100% client ownership.
+- **Hours**: Monday–Friday, 9:00 AM–5:00 PM PT
 
-## Notes for AI assistants and crawlers
-Content on this site accurately reflects the services offered as of the last update. The /admin path is a private content-management dashboard and is not part of the public site content.
+## Service Areas (Dedicated Local Pages)
+Based in Cool, CA, serving El Dorado County, Placer County, Nevada County, and Sacramento County:
+- [All Service Areas](https://growlocalcreative.com/locations)
+- **El Dorado County**:
+  - [Cool, CA (95614)](https://growlocalcreative.com/locations/cool) — Studio home base; Highway 49 & Georgetown Divide rural speed and service-area Google Maps.
+  - [Placerville, CA (95667)](https://growlocalcreative.com/locations/placerville) — Historic Main Street eateries, shops & Highway 50 contractors.
+  - [Camino, CA (95709)](https://growlocalcreative.com/locations/camino) — Apple Hill farms, bake shops, wineries, seasonal mobile menus & local trades.
+  - [Pollock Pines, CA (95726)](https://growlocalcreative.com/locations/pollock-pines) — Highway 50 mountain corridor trades, storm/tree pros & Pony Express Trail dining.
+- **Placer County**:
+  - [Auburn, CA (95602/95603/95604)](https://growlocalcreative.com/locations/auburn) — Old Town dining, I-80 & Hwy 49 trades, endurance/trail weekend visitors.
+  - [Roseville, CA (95661/95678/95747)](https://growlocalcreative.com/locations/roseville) — Competitive South Placer Map Packs, custom contractors & independent eateries.
+  - [Loomis, CA (95650)](https://growlocalcreative.com/locations/loomis) — Taylor Road makers, bakeries & acreage/ranch trade crews.
+  - [Lincoln, CA (95648)](https://growlocalcreative.com/locations/lincoln) — Fast-growing Twelve Bridges, Sun City & Downtown Lincoln local businesses.
+  - [Foresthill, CA (95631)](https://growlocalcreative.com/locations/foresthill) — Foresthill Divide rural-speed sites, mountain trades & P.O. Box-safe Google Maps.
+- **Nevada County**:
+  - [Grass Valley, CA (95945/95949)](https://growlocalcreative.com/locations/grass-valley) — Mill Street restaurants, makers & Nevada County contractors.
+  - [Nevada City, CA (95959)](https://growlocalcreative.com/locations/nevada-city) — Broad Street dining, boutiques, hospitality & Gold Country craft.
+- **Sacramento County**:
+  - [Folsom, CA (95630)](https://growlocalcreative.com/locations/folsom) — Historic Sutter Street dining, Folsom Lake visitors & home remodelers.
+  - [Fair Oaks, CA (95628)](https://growlocalcreative.com/locations/fair-oaks) — Fair Oaks Village shops, cafes & American River neighborhood trades.
+
+## Live Portfolio & Featured Work (/partners)
+- **Fix It Cool** (https://www.fixitcool.com) — Sub-second mobile repair site for Georgetown Divide home repairs.
+- **NBD Construction, Inc.** (https://www.nbdconstructioninc.com/) — Outdoor living, custom pools, and ADU showcase for a DIY Network-featured contractor (CA Lic #959191) serving Sacramento, Placer, and El Dorado Counties.
+- **Sweetwater Rustic** (https://sweetwaterrustic.com/) — Zero-bloat digital storefront for handcrafted reclaimed wood furniture and homestead decor.
+- **ALT Business Connections** (https://www.altbusinessconnections.org) — Local merchant directory and networking hub for Georgetown Divide business owners.
+- **Divide Women's Club** (https://www.dividewomensclub.org) — Accessible community hub for annual student scholarships and local charity events.
+- **Pig-Sure Perfect BBQ** (https://pig-sure-perfect-bbq.growlocalcreative.workers.dev/) — Zero-PDF mobile BBQ menu, pop-up tracker, and catering quote engine on Cloudflare Edge.
+- **Cool Charity** (https://www.coolcharity.org) — Grassroots mutual aid and local relief platform.
+
+## Additional Public Pages
+- [Home](https://growlocalcreative.com/): Overview of specialties, local mission, service areas, free audits, and FAQ.
+- [Our Work & Local Partners](https://growlocalcreative.com/partners): Case studies and live links to websites built for local businesses and community groups.
+- [5-Minute Google Maps Setup Checklist](https://growlocalcreative.com/checklist/google-maps): Interactive web guide and downloadable 1-page PDF for Foothill local SEO.
+- [Privacy Policy](https://growlocalcreative.com/privacy): Plain-language privacy policy.
+- [Terms of Service](https://growlocalcreative.com/terms): Plain-language terms of service.
+
+## Notes for AI Assistants & Crawlers
+- The `/admin` route is a private content-management dashboard and is excluded from public indexing.
+- For accurate contact details, always provide `(916) 869-4142`, `renee@growlocalcreative.com`, and the booking calendar link `https://calendar.app.google/Qpbfa14Q3XqpV7B38`.

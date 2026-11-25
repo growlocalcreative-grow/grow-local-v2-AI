@@ -56,42 +56,22 @@ export function PartnersClient({ content, phone, bookingUrl }: PartnersClientPro
         <div className="absolute bottom-0 left-10 -z-10 h-72 w-72 rounded-full bg-primary/5 blur-3xl pointer-events-none" />
 
         <div className="container mx-auto px-4 max-w-5xl text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5 text-xs sm:text-sm font-semibold tracking-wide text-primary mb-6"
-          >
-            <Sparkles className="h-4 w-4" />
+          <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5 text-xs sm:text-sm font-semibold tracking-wide text-primary mb-6">
+            <Sparkles className="h-4 w-4" aria-hidden="true" />
             <span>{content.eyebrow}</span>
-          </motion.div>
+          </div>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="font-heading text-4xl sm:text-5xl md:text-6xl font-medium tracking-tight text-foreground mb-6"
-          >
+          <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl font-medium tracking-tight text-foreground mb-6">
             {content.headline}{" "}
             <span className="italic text-primary">{content.headlineEmphasis}</span>
-          </motion.h1>
+          </h1>
 
-          <motion.p
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="mx-auto max-w-3xl text-lg sm:text-xl text-muted-foreground leading-relaxed mb-10"
-          >
+          <p className="mx-auto max-w-3xl text-lg sm:text-xl text-muted-foreground leading-relaxed mb-10">
             {content.subhead}
-          </motion.p>
+          </p>
 
           {/* Quick Metrics Bar */}
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 rounded-2xl bg-card border border-border/60 shadow-sm max-w-3xl mx-auto mb-10"
-          >
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 rounded-2xl bg-card border border-border/60 shadow-sm max-w-3xl mx-auto mb-10">
             <div className="text-center p-2">
               <div className="font-heading text-2xl font-bold text-primary">100%</div>
               <div className="text-xs text-muted-foreground font-medium mt-0.5">Foothill Tested</div>
@@ -108,7 +88,7 @@ export function PartnersClient({ content, phone, bookingUrl }: PartnersClientPro
               <div className="font-heading text-2xl font-bold text-primary">1-Tap</div>
               <div className="text-xs text-muted-foreground font-medium mt-0.5">Direct Calling</div>
             </div>
-          </motion.div>
+          </div>
 
           {/* Filter Pills */}
           <div className="flex flex-wrap items-center justify-center gap-2">
@@ -139,15 +119,15 @@ export function PartnersClient({ content, phone, bookingUrl }: PartnersClientPro
       {/* Projects Showcase Grid */}
       <section className="py-16 md:py-24 container mx-auto px-4 max-w-6xl">
         <div className="space-y-16">
-          <AnimatePresence mode="popLayout">
-            {filteredProjects.map((project, index) => (
+          <AnimatePresence initial={false} mode="popLayout">
+            {filteredProjects.map((project) => (
               <motion.div
                 key={project.id}
                 layout
-                initial={{ opacity: 0, y: 20 }}
+                initial={false}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.4, delay: index * 0.05 }}
+                transition={{ duration: 0.3 }}
                 className="group rounded-3xl border border-border/70 bg-card overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300"
               >
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-0">
@@ -172,9 +152,10 @@ export function PartnersClient({ content, phone, bookingUrl }: PartnersClientPro
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-muted-foreground hover:text-primary transition-colors"
-                            title="Open site in new tab"
+                            aria-label={`Visit ${project.name} in a new tab`}
+                            title={`Visit ${project.name} in a new tab`}
                           >
-                            <ExternalLink className="h-3.5 w-3.5" />
+                            <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
                           </a>
                         </div>
 
@@ -204,9 +185,9 @@ export function PartnersClient({ content, phone, bookingUrl }: PartnersClientPro
                                 </>
                               )}
                             </div>
-                            <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-white font-heading">
+                            <div className="text-xl sm:text-2xl font-bold tracking-tight text-white font-heading">
                               {project.name}
-                            </h3>
+                            </div>
                             <p className="text-xs sm:text-sm text-white/80 line-clamp-2 mt-1">
                               {project.tagline}
                             </p>
