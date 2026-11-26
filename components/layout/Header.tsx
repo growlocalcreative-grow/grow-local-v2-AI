@@ -19,6 +19,7 @@ export function Header({ settings }: { settings: SiteSettings }) {
     { name: "Services", href: "/services", isCurrent: pathname?.startsWith("/services") },
     { name: "Service Areas", href: "/locations", isCurrent: pathname?.startsWith("/locations") },
     { name: "Our Work", href: "/partners", isCurrent: pathname === "/partners" },
+    { name: "Free Audit", href: "/audit", isCurrent: pathname === "/audit" },
     {
       name: "Maps Checklist",
       href: "/checklist/google-maps",
@@ -86,7 +87,7 @@ export function Header({ settings }: { settings: SiteSettings }) {
         </div>
 
         {/* Desktop Nav */}
-        <nav aria-label="Main navigation" className="hidden md:flex items-center gap-7">
+        <nav aria-label="Main navigation" className="hidden md:flex items-center gap-6">
           {navLinks.map((link) => (
             <Link
               key={link.name}

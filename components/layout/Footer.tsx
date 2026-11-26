@@ -47,9 +47,6 @@ export function Footer({ settings }: { settings: SiteSettings }) {
                   width={56}
                   height={56}
                   className="h-full w-full object-contain"
-                  onError={(e) => {
-                    e.currentTarget.src = "https://picsum.photos/seed/growlocal/100/100";
-                  }}
                   referrerPolicy="no-referrer"
                 />
               </div>
@@ -110,6 +107,14 @@ export function Footer({ settings }: { settings: SiteSettings }) {
                   className="text-primary-foreground/90 hover:text-secondary transition-colors"
                 >
                   Our Work &amp; Local Partners
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/audit"
+                  className="text-primary-foreground/90 hover:text-secondary transition-colors"
+                >
+                  Free Website &amp; Google Audit
                 </Link>
               </li>
               <li>

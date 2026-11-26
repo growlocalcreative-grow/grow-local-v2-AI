@@ -181,12 +181,12 @@ export const DEFAULT_FREEBIES: FreebiesContent = {
     "No pressure, no hard sell. Just honest, practical guidance from a neighbor to help your local business stand out and thrive.",
   items: [
     {
-      title: "Free 3-Minute Video 'Leak' Audit",
+      title: "Free Instant Website & Google Readiness Audit",
       description:
-        "Send over your website or Google listing. I'll record a private 3-minute video showing 3 specific spots where you might be losing local customers to competitors.",
+        "Run a real 15-second check on your live website (or get a local launch plan if you don't have one yet). Spot mobile speed leaks, missing tap-to-call buttons, clunky PDF menus, and Google Maps gaps in plain English.",
       icon: "Search",
-      buttonText: "Request My Free Audit",
-      href: "mailto:renee@growlocalcreative.com?subject=Free%203-Minute%20Website%20Audit&body=Hi%20Renee%2C%20I'd%20love%20a%20free%203-minute%20video%20audit%20of%20my%20business%20presence.%20My%20business%20name%20or%20website%20is%3A",
+      buttonText: "Run My Free Site Audit",
+      href: "/audit",
     },
     {
       title: "Google Search & Mobile Readiness Check",
@@ -607,15 +607,31 @@ async function fetchContentDoc<T extends object>(docId: string, fallback: T): Pr
         }
       }
 
-      // Upgrade any stale gmail contact links stored in Firestore freebies to the official email
+      // Upgrade legacy freebies items: swap old mailto 3-minute video audit to /audit and fix stale gmail links
       if (docId === "freebies" && Array.isArray((result as any).items)) {
-        (result as any).items = (result as any).items.map((item: any) => ({
-          ...item,
-          href:
-            typeof item.href === "string"
-              ? item.href.replace(/mailto:growlocalcreative@gmail\.com/gi, `mailto:${OFFICIAL_EMAIL}`)
-              : item.href,
-        }));
+        (result as any).items = (result as any).items.map((item: any) => {
+          const isLegacyVideoAudit =
+            (typeof item.title === "string" && /3-minute\s+video/i.test(item.title)) ||
+            (typeof item.href === "string" && /3-Minute%20Website%20Audit/i.test(item.href));
+
+          if (isLegacyVideoAudit) {
+            return {
+              ...item,
+              title: DEFAULT_FREEBIES.items[0].title,
+              description: DEFAULT_FREEBIES.items[0].description,
+              buttonText: DEFAULT_FREEBIES.items[0].buttonText,
+              href: "/audit",
+            };
+          }
+
+          return {
+            ...item,
+            href:
+              typeof item.href === "string"
+                ? item.href.replace(/mailto:growlocalcreative@gmail\.com/gi, `mailto:${OFFICIAL_EMAIL}`)
+                : item.href,
+          };
+        });
       }
 
       return result as T;

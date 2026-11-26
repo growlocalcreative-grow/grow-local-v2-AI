@@ -36,6 +36,39 @@
         "createdAt": { "type": "string", "format": "date-time" }
       },
       "required": ["email", "createdAt"]
+    },
+    "AuditLead": {
+      "title": "Audit Lead",
+      "description": "Local business website and Google readiness audit lead",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string", "format": "email" },
+        "name": { "type": "string" },
+        "phone": { "type": "string" },
+        "hasWebsite": { "type": "boolean" },
+        "websiteUrl": { "type": "string" },
+        "businessName": { "type": "string" },
+        "businessType": { "type": "string" },
+        "town": { "type": "string" },
+        "recommendedSpecialty": { "type": "string" },
+        "topIssues": { "type": "array" },
+        "summary": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "email",
+        "name",
+        "phone",
+        "hasWebsite",
+        "websiteUrl",
+        "businessName",
+        "businessType",
+        "town",
+        "recommendedSpecialty",
+        "topIssues",
+        "summary",
+        "createdAt"
+      ]
     }
   },
   "firestore": {
@@ -50,6 +83,10 @@
     "subscribers/{subscriberId}": {
       "schema": "Subscriber",
       "description": "Newsletter email list"
+    },
+    "audit_leads/{leadId}": {
+      "schema": "AuditLead",
+      "description": "Captured leads from the Free Local Website & Google Readiness Audit tool"
     }
   }
 }

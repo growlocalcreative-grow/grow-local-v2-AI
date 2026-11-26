@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { ArrowRight, Gift } from "lucide-react";
 import { getIcon } from "@/lib/icon-map";
 import { OFFICIAL_EMAIL, type FreebiesContent } from "@/lib/content";
@@ -31,6 +32,7 @@ export function Freebies({ data }: { data: FreebiesContent }) {
               /mailto:growlocalcreative@gmail\.com/gi,
               `mailto:${OFFICIAL_EMAIL}`
             );
+            const isInternal = normalizedHref.startsWith("/");
 
             return (
               <div
@@ -44,13 +46,23 @@ export function Freebies({ data }: { data: FreebiesContent }) {
                 <h3 className="font-heading text-2xl font-medium text-stone-900 mb-4">{card.title}</h3>
                 <p className="text-stone-600 leading-relaxed mb-8 flex-grow">{card.description}</p>
 
-                <a
-                  href={normalizedHref}
-                  className="inline-flex items-center justify-between w-full px-6 py-4 rounded-xl bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors group/btn"
-                >
-                  <span>{card.buttonText}</span>
-                  <ArrowRight className="h-5 w-5 group-hover/btn:translate-x-1 transition-transform" aria-hidden="true" />
-                </a>
+                {isInternal ? (
+                  <Link
+                    href={normalizedHref}
+                    className="inline-flex items-center justify-between w-full px-6 py-4 rounded-xl bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors group/btn"
+                  >
+                    <span>{card.buttonText}</span>
+                    <ArrowRight className="h-5 w-5 group-hover/btn:translate-x-1 transition-transform" aria-hidden="true" />
+                  </Link>
+                ) : (
+                  <a
+                    href={normalizedHref}
+                    className="inline-flex items-center justify-between w-full px-6 py-4 rounded-xl bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors group/btn"
+                  >
+                    <span>{card.buttonText}</span>
+                    <ArrowRight className="h-5 w-5 group-hover/btn:translate-x-1 transition-transform" aria-hidden="true" />
+                  </a>
+                )}
               </div>
             );
           })}

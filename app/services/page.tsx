@@ -217,11 +217,15 @@ export default async function ServicesIndexPage() {
 
             <div className="mt-10 pt-8 border-t border-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-sm text-muted-foreground">
               <p>
-                Not sure which service fits best? Email{" "}
+                Not sure which service fits best?{" "}
+                <Link href="/audit" className="text-primary font-semibold hover:underline">
+                  Run our free 15-second Website &amp; Google Audit
+                </Link>
+                , email{" "}
                 <a href={`mailto:${email}`} className="text-primary font-medium hover:underline">
                   {email}
-                </a>{" "}
-                or call{" "}
+                </a>
+                , or call{" "}
                 <a href={`tel:${phoneDigits}`} className="text-primary font-medium hover:underline">
                   {phone}
                 </a>

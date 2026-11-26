@@ -50,6 +50,7 @@ Based in Cool, CA, serving El Dorado County, Placer County, Nevada County, and S
 ## Additional Public Pages
 - [Home](https://growlocalcreative.com/): Overview of specialties, local mission, service areas, free audits, and FAQ.
 - [Our Work & Local Partners](https://growlocalcreative.com/partners): Case studies and live links to websites built for local businesses and community groups.
+- [Free Website & Google Readiness Audit](https://growlocalcreative.com/audit): Interactive 15-second live website scanner and plain-English local action plan for Foothill and Greater Sacramento small businesses (works with an existing site or for businesses without a website yet).
 - [5-Minute Google Maps Setup Checklist](https://growlocalcreative.com/checklist/google-maps): Interactive web guide and downloadable 1-page PDF for Foothill local SEO.
 - [Privacy Policy](https://growlocalcreative.com/privacy): Plain-language privacy policy.
 - [Terms of Service](https://growlocalcreative.com/terms): Plain-language terms of service.

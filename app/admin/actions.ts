@@ -45,6 +45,32 @@ export async function deleteSubscriberAction(id: string, idToken: string) {
 }
 
 /**
+ * Server action to fetch captured audit leads using REST API.
+ */
+export async function getAuditLeadsAction(idToken: string) {
+  try {
+    const results = await runQuery("audit_leads", "createdAt", "DESCENDING", idToken, "no-store");
+    return { success: true, data: results };
+  } catch (error: any) {
+    console.error("Fetch audit leads error:", error);
+    return { success: false, error: error.message };
+  }
+}
+
+/**
+ * Server action to delete a captured audit lead.
+ */
+export async function deleteAuditLeadAction(id: string, idToken: string) {
+  try {
+    await deleteDocument("audit_leads", id, idToken);
+    return { success: true };
+  } catch (error: any) {
+    console.error("Delete audit lead error:", error);
+    return { success: false, error: error.message };
+  }
+}
+
+/**
  * Server action to fetch a document.
  */
 export async function getDocumentAction(collection: string, docId: string) {

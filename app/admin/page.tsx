@@ -13,6 +13,8 @@ import {
   saveContentAction, 
   getSubscribersAction, 
   deleteSubscriberAction, 
+  getAuditLeadsAction,
+  deleteAuditLeadAction,
   getDocumentAction 
 } from "./actions";
 import { Button } from "@/components/ui/button";
@@ -21,7 +23,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Lock, Save, LogOut, CheckCircle2, AlertCircle, Plus, Trash2, ArrowUp, ArrowDown, GripVertical, Eye, EyeOff, Pencil, RefreshCw, Mail, Sparkles, ExternalLink, FileText, Download } from "lucide-react";
+import { Lock, Save, LogOut, CheckCircle2, AlertCircle, Plus, Trash2, ArrowUp, ArrowDown, GripVertical, Eye, EyeOff, Pencil, RefreshCw, Mail, Sparkles, ExternalLink, FileText, Download, Search } from "lucide-react";
 import { ICON_OPTIONS } from "@/lib/icon-map";
 import aiStudioConfig from "@/firebase-applet-config.json";
 
@@ -113,6 +115,24 @@ export default function AdminPage() {
   const [faq, setFaq] = useState<FaqContent>(DEFAULT_FAQ);
   const [partners, setPartners] = useState<PartnersPageContent>(DEFAULT_PARTNERS);
   const [subscribers, setSubscribers] = useState<{ id: string; email: string; createdAt: any }[]>([]);
+  const [auditLeads, setAuditLeads] = useState<
+    {
+      id: string;
+      email: string;
+      name?: string;
+      phone?: string;
+      hasWebsite?: boolean;
+      websiteUrl?: string;
+      businessName?: string;
+      businessType?: string;
+      town?: string;
+      recommendedSpecialty?: string;
+      topIssues?: string[];
+      summary?: string;
+      createdAt?: string;
+    }[]
+  >([]);
+  const [confirmDeleteLeadId, setConfirmDeleteLeadId] = useState<string | null>(null);
 
   const [saving, setSaving] = useState<string | null>(null);
   const [status, setStatus] = useState<Record<string, Status>>({});
@@ -142,7 +162,7 @@ export default function AdminPage() {
   }, []);
 
   async function loadAll(token: string) {
-    const [heroData, aboutData, servicesData, freebiesData, futureData, faqData, partnersData, subscribersRes, settingsRes] = await Promise.all([
+    const [heroData, aboutData, servicesData, freebiesData, futureData, faqData, partnersData, subscribersRes, auditLeadsRes, settingsRes] = await Promise.all([
       loadContentDoc("hero", DEFAULT_HERO),
       loadContentDoc("about", DEFAULT_ABOUT),
       loadContentDoc("services", DEFAULT_SERVICES),
@@ -151,11 +171,15 @@ export default function AdminPage() {
       loadContentDoc("faq", DEFAULT_FAQ),
       loadContentDoc("partners", DEFAULT_PARTNERS),
       getSubscribersAction(token),
+      getAuditLeadsAction(token),
       getDocumentAction("site_settings", "global")
     ]);
 
     if (subscribersRes.success) {
       setSubscribers(subscribersRes.data || []);
+    }
+    if (auditLeadsRes.success) {
+      setAuditLeads(auditLeadsRes.data || []);
     }
     
     // Merge database settings with code-level defaults to ensure all fields exist
@@ -369,6 +393,7 @@ export default function AdminPage() {
           <TabsTrigger value="future">Future Tools</TabsTrigger>
           <TabsTrigger value="freebies">Freebies</TabsTrigger>
           <TabsTrigger value="faq">FAQ</TabsTrigger>
+          <TabsTrigger value="audit-leads">Audit Leads ({auditLeads.length})</TabsTrigger>
           <TabsTrigger value="newsletter">Newsletter</TabsTrigger>
           <TabsTrigger value="settings">Site Settings</TabsTrigger>
         </TabsList>
@@ -1406,6 +1431,219 @@ export default function AdminPage() {
               </CardContent>
             </Card>
           </div>
+        </TabsContent>
+
+        {/* AUDIT LEADS */}
+        <TabsContent value="audit-leads">
+          <Card>
+            <CardHeader>
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div>
+                  <CardTitle>Website &amp; Google Audit Leads</CardTitle>
+                  <CardDescription>
+                    {auditLeads.length} local business {auditLeads.length === 1 ? "owner" : "owners"} unlocked their full action plan on /audit.
+                  </CardDescription>
+                </div>
+                <div className="flex items-center gap-2">
+                  {auditLeads.length > 0 && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        const escapeCsv = (val: string) => `"${(val || "").replace(/"/g, '""')}"`;
+                        const header = "Date,Email,Name,Phone,Business Name,Website,Business Type,Town,Recommended Specialty,Top Issues\n";
+                        const rows = auditLeads.map((lead) =>
+                          [
+                            lead.createdAt || "",
+                            lead.email || "",
+                            lead.name || "",
+                            lead.phone || "",
+                            lead.businessName || "",
+                            lead.hasWebsite ? lead.websiteUrl || "" : "No website yet",
+                            lead.businessType || "",
+                            lead.town || "",
+                            lead.recommendedSpecialty || "",
+                            (lead.topIssues || []).join(" | "),
+                          ]
+                            .map(escapeCsv)
+                            .join(",")
+                        );
+                        const blob = new Blob([header + rows.join("\n")], { type: "text/csv" });
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement("a");
+                        a.setAttribute("hidden", "");
+                        a.setAttribute("href", url);
+                        a.setAttribute("download", "audit-leads.csv");
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                      }}
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      Export CSV
+                    </Button>
+                  )}
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    aria-label="Refresh audit leads"
+                    onClick={async () => {
+                      if (user) {
+                        const token = await user.getIdToken();
+                        loadAll(token);
+                      }
+                    }}
+                  >
+                    <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+                  </Button>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {auditLeads.length === 0 ? (
+                <div className="text-center py-12 text-muted-foreground space-y-2">
+                  <Search className="h-10 w-10 mx-auto opacity-25" />
+                  <p className="font-medium text-stone-700">No audit leads captured yet.</p>
+                  <p className="text-xs max-w-md mx-auto">
+                    When a visitor runs a scan at /audit and enters their email to unlock their full 3-leak plan, their contact info and top issues will appear right here.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {auditLeads.map((lead) => {
+                    const safeUrl =
+                      lead.websiteUrl && /^https?:\/\//i.test(lead.websiteUrl) ? lead.websiteUrl : "";
+                    const dateLabel = lead.createdAt
+                      ? new Date(lead.createdAt).toLocaleString()
+                      : "Recently";
+
+                    return (
+                      <div
+                        key={lead.id}
+                        className="p-5 border rounded-2xl bg-card/50 space-y-3"
+                      >
+                        <div className="flex flex-wrap items-start justify-between gap-3">
+                          <div className="space-y-1 min-w-0">
+                            <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                              <span className="font-semibold text-base text-stone-900">
+                                {lead.name || lead.businessName || lead.email}
+                              </span>
+                              <span className="text-xs text-stone-500">·</span>
+                              <a
+                                href={`mailto:${lead.email}`}
+                                className="text-sm text-primary underline underline-offset-4"
+                              >
+                                {lead.email}
+                              </a>
+                              {lead.phone && (
+                                <>
+                                  <span className="text-xs text-stone-500">·</span>
+                                  <a
+                                    href={`tel:${lead.phone.replace(/[^0-9+]/g, "")}`}
+                                    className="text-sm text-stone-700 hover:text-primary"
+                                  >
+                                    {lead.phone}
+                                  </a>
+                                </>
+                              )}
+                            </div>
+                            <p className="text-xs text-muted-foreground flex flex-wrap items-center gap-x-2 gap-y-1">
+                              <span>{lead.town || "Foothills"}</span>
+                              <span>·</span>
+                              <span>{lead.businessType || "Local Business"}</span>
+                              <span>·</span>
+                              <span>Fit: {lead.recommendedSpecialty || "website-rescues"}</span>
+                              <span>·</span>
+                              <span>{dateLabel}</span>
+                            </p>
+                          </div>
+
+                          <div className="flex items-center gap-2 shrink-0">
+                            {confirmDeleteLeadId === lead.id ? (
+                              <>
+                                <Button
+                                  variant="destructive"
+                                  size="sm"
+                                  onClick={async () => {
+                                    if (!user) return;
+                                    try {
+                                      const token = await user.getIdToken();
+                                      const res = await deleteAuditLeadAction(lead.id, token);
+                                      if (res.success) {
+                                        setAuditLeads((prev) => prev.filter((item) => item.id !== lead.id));
+                                      }
+                                    } finally {
+                                      setConfirmDeleteLeadId(null);
+                                    }
+                                  }}
+                                >
+                                  Confirm Delete
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => setConfirmDeleteLeadId(null)}
+                                >
+                                  Cancel
+                                </Button>
+                              </>
+                            ) : (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                aria-label={`Delete lead ${lead.email}`}
+                                className="h-8 w-8 text-destructive hover:bg-destructive/10"
+                                onClick={() => setConfirmDeleteLeadId(lead.id)}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="text-sm text-stone-700 flex flex-wrap items-center gap-2">
+                          <span className="font-medium text-stone-900">Website:</span>
+                          {safeUrl ? (
+                            <a
+                              href={safeUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 text-primary underline underline-offset-4 break-all"
+                            >
+                              {safeUrl}
+                              <ExternalLink className="h-3.5 w-3.5 shrink-0" />
+                            </a>
+                          ) : (
+                            <span className="text-stone-600">No website yet</span>
+                          )}
+                          {lead.businessName && (
+                            <span className="text-stone-600">({lead.businessName})</span>
+                          )}
+                        </div>
+
+                        {lead.summary && (
+                          <p className="text-xs text-stone-600 leading-relaxed bg-stone-50 border border-stone-200/80 rounded-xl p-3">
+                            {lead.summary}
+                          </p>
+                        )}
+
+                        {Array.isArray(lead.topIssues) && lead.topIssues.length > 0 && (
+                          <div className="space-y-1">
+                            <p className="text-xs font-semibold text-stone-700">Top Leaks Flagged:</p>
+                            <ul className="list-disc list-inside text-xs text-stone-600 space-y-0.5">
+                              {lead.topIssues.map((issue, idx) => (
+                                <li key={idx}>{issue}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </TabsContent>
 
         {/* SITE SETTINGS */}
