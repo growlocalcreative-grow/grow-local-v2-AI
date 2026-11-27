@@ -227,7 +227,13 @@ export async function createDocument(collection: string, docId: string | null, d
     return patchDocument(collection, docId, data, idToken);
   }
 
-  const url = getUrl(`${collection}`);
+  // Pass an explicit alphanumeric documentId on REST POST so security rules
+  // checking isValidId(docId) evaluate against a populated ID rather than empty string.
+  const generatedId =
+    typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+      ? crypto.randomUUID().replace(/-/g, "")
+      : `doc_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
+  const url = getUrl(`${collection}?documentId=${encodeURIComponent(generatedId)}`);
   const fields: Record<string, any> = {};
   
   for (const [key, value] of Object.entries(data)) {
