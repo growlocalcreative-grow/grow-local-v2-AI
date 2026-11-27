@@ -1,5 +1,4 @@
 import dns from "node:dns/promises";
-import net from "node:net";
 import type {
   AuditCheckItem,
   AuditScanFacts,
@@ -27,6 +26,17 @@ const BLOCKED_HOSTNAME_SUFFIXES = [
   ".localdomain",
 ];
 
+function isIpv4Literal(host: string): boolean {
+  const parts = host.split(".");
+  if (parts.length !== 4) return false;
+  return parts.every((part) => /^\d{1,3}$/.test(part) && Number(part) >= 0 && Number(part) <= 255);
+}
+
+function isIpv6Literal(host: string): boolean {
+  const cleaned = host.replace(/^\[|\]$/g, "");
+  return cleaned.includes(":") && /^[0-9a-f:.]+$/i.test(cleaned);
+}
+
 function isPrivateOrReservedIpv4(ip: string): boolean {
   const parts = ip.split(".").map((p) => Number(p));
   if (parts.length !== 4 || parts.some((n) => !Number.isInteger(n) || n < 0 || n > 255)) {
@@ -50,12 +60,12 @@ function isPrivateOrReservedIpv4(ip: string): boolean {
 }
 
 function isPrivateOrReservedIpv6(ip: string): boolean {
-  const lower = ip.toLowerCase();
+  const lower = ip.toLowerCase().replace(/^\[|\]$/g, "");
   if (lower === "::1" || lower === "::") return true;
   if (lower.startsWith("fe80:") || lower.startsWith("fc") || lower.startsWith("fd")) return true;
   if (lower.startsWith("::ffff:")) {
     const mappedV4 = lower.slice(7);
-    if (net.isIPv4(mappedV4)) {
+    if (isIpv4Literal(mappedV4)) {
       return isPrivateOrReservedIpv4(mappedV4);
     }
     return true;
@@ -64,10 +74,39 @@ function isPrivateOrReservedIpv6(ip: string): boolean {
 }
 
 function isBlockedIpAddress(ip: string): boolean {
-  const kind = net.isIP(ip);
-  if (kind === 4) return isPrivateOrReservedIpv4(ip);
-  if (kind === 6) return isPrivateOrReservedIpv6(ip);
+  if (isIpv4Literal(ip)) return isPrivateOrReservedIpv4(ip);
+  if (isIpv6Literal(ip)) return isPrivateOrReservedIpv6(ip);
   return true;
+}
+
+async function resolvePublicAddresses(hostname: string): Promise<string[] | null> {
+  try {
+    const records = await dns.lookup(hostname, { all: true, verbatim: true });
+    if (records && records.length > 0) {
+      return records.map((r) => r.address);
+    }
+    return [];
+  } catch (err: unknown) {
+    const code = (err as { code?: string })?.code;
+    const message = err instanceof Error ? err.message : "";
+    // Cloudflare Workers nodejs_compat may not implement dns.lookup; fall back to DoH-backed resolve4/resolve6
+    if (code === "ERR_NOT_IMPLEMENTED" || /not implemented/i.test(message)) {
+      const [v4, v6] = await Promise.allSettled([
+        dns.resolve4(hostname),
+        dns.resolve6(hostname),
+      ]);
+      const ips: string[] = [];
+      if (v4.status === "fulfilled") ips.push(...v4.value);
+      if (v6.status === "fulfilled") ips.push(...v6.value);
+      if (ips.length > 0) return ips;
+      // If both resolve4 and resolve6 also report unimplemented, allow fetch on edge runtime
+      const bothUnimplemented =
+        (v4.status === "rejected" && /not implemented/i.test(String(v4.reason))) ||
+        (v6.status === "rejected" && /not implemented/i.test(String(v6.reason)));
+      return bothUnimplemented ? null : [];
+    }
+    throw err;
+  }
 }
 
 /**
@@ -107,7 +146,8 @@ export async function validatePublicUrl(rawInput: string): Promise<URL> {
     hostname === "localhost" ||
     hostname === "metadata.google.internal" ||
     hostname.includes(":") ||
-    net.isIP(hostname) !== 0 ||
+    isIpv4Literal(hostname) ||
+    isIpv6Literal(hostname) ||
     !hostname.includes(".") ||
     !/\.[a-z]{2,24}$/i.test(hostname) ||
     BLOCKED_HOSTNAME_SUFFIXES.some((suffix) => hostname.endsWith(suffix))
@@ -120,19 +160,21 @@ export async function validatePublicUrl(rawInput: string): Promise<URL> {
 
   // Resolve DNS to guard against domains pointing at private/internal networks
   try {
-    const records = await dns.lookup(hostname, { all: true, verbatim: true });
-    if (!records || records.length === 0) {
-      throw new AuditValidationError(
-        `We couldn't find a live website at ${hostname}. Double-check the spelling and try again.`,
-        422
-      );
-    }
-    for (const record of records) {
-      if (isBlockedIpAddress(record.address)) {
+    const addresses = await resolvePublicAddresses(hostname);
+    if (addresses !== null) {
+      if (addresses.length === 0) {
         throw new AuditValidationError(
-          "That web address points to a private network and cannot be audited.",
-          400
+          `We couldn't find a live website at ${hostname}. Double-check the spelling and try again.`,
+          422
         );
+      }
+      for (const ip of addresses) {
+        if (isBlockedIpAddress(ip)) {
+          throw new AuditValidationError(
+            "That web address points to a private network and cannot be audited.",
+            400
+          );
+        }
       }
     }
   } catch (err) {
@@ -189,7 +231,7 @@ async function readBoundedText(res: Response, maxBytes: number): Promise<{ text:
   const reader = res.body?.getReader();
   if (!reader) {
     const text = (await res.text()).slice(0, maxBytes);
-    return { text, bytes: Buffer.byteLength(text, "utf8") };
+    return { text, bytes: new TextEncoder().encode(text).byteLength };
   }
 
   const chunks: Uint8Array[] = [];
